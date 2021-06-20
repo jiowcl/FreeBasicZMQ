@@ -3,6 +3,8 @@
 '  Code released under the MIT license.
 '--------------------------------------------------------------------------------------------
 
+#Pragma Once
+
 ' Function Declare
 Declare Function ZmqDllOpen(Byval lpszDllPath As String) As Any Ptr
 Declare Function ZmqDllClose(Byval dllInstance As Any Ptr) As Boolean

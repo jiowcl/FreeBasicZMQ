@@ -3,6 +3,8 @@
 '  Code released under the MIT license.
 '--------------------------------------------------------------------------------------------
 
+#Pragma Once
+
 ' Declare Function
 Declare Function ZmqCtxNew(Byval dllInstance As Any Ptr) As Any Ptr
 Declare Function ZmqCtxTerm(Byval dllInstance As Any Ptr, Byval context As Any Ptr) As Long

@@ -3,6 +3,8 @@
 '  Code released under the MIT license.
 '--------------------------------------------------------------------------------------------
 
+#Pragma Once
+
 ' Prototype Function
 Declare Function ZmqSocket(Byval dllInstance As Any Ptr, Byval s As Any Ptr, Byval stype As Long) As Any Ptr
 Declare Function ZmqBind(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval addr As ZString Ptr) As Long

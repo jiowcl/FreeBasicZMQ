@@ -3,6 +3,8 @@
 '  Code released under the MIT license.
 '--------------------------------------------------------------------------------------------
 
+#Pragma Once
+
 ' Declare Function
 Declare Function ZmqErrno(Byval dllInstance As Any Ptr) As Long
 Declare Function ZmqStrerror(Byval dllInstance As Any Ptr, Byval errnum_ As Integer) As ZString Ptr

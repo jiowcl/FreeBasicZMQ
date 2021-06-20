@@ -3,6 +3,8 @@
 '  Code released under the MIT license.
 '--------------------------------------------------------------------------------------------
 
+#Pragma Once
+
 ' Declare Function
 Declare Function ZmqStopwatchStart(Byval dllInstance As Any Ptr) As Any Ptr
 Declare Function ZmqStopwatchIntermediate(Byval dllInstance As Any Ptr, Byval watch_ As Any Ptr) As Culong

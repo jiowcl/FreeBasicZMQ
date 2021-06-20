@@ -3,6 +3,8 @@
 '  Code released under the MIT license.
 '--------------------------------------------------------------------------------------------
 
+#Pragma Once
+
 ' Socket Types
 Const ZMQ_PAIR   As Long = 0
 Const ZMQ_PUB    As Long = 1
@@ -117,9 +119,36 @@ Const ZMQ_THREAD_SCHED_POLICY_DFLT As Long = -1
 Const ZMQ_MORE   As Long = 1
 Const ZMQ_SHARED As Long = 3
 
-' Send/recv Options
+' Send/Recv Options
 Const ZMQ_DONTWAIT As Long = 1
 Const ZMQ_SNDMORE  As Long = 2
+
+' Errors
+Const ZMQ_HAUSNUMERO  As Long = 156384712
+Const ENOTSUP         As Long = ZMQ_HAUSNUMERO + 1
+Const EPROTONOSUPPORT As Long = ZMQ_HAUSNUMERO + 2
+Const ENOBUFS         As Long = ZMQ_HAUSNUMERO + 3
+Const ENETDOWN        As Long = ZMQ_HAUSNUMERO + 4
+Const EADDRINUSE      As Long = ZMQ_HAUSNUMERO + 5
+Const EADDRNOTAVAIL   As Long = ZMQ_HAUSNUMERO + 6
+Const ECONNREFUSED    As Long = ZMQ_HAUSNUMERO + 7
+Const EINPROGRESS     As Long = ZMQ_HAUSNUMERO + 8
+Const ENOTSOCK        As Long = ZMQ_HAUSNUMERO + 9
+Const EMSGSIZE        As Long = ZMQ_HAUSNUMERO + 10
+Const EAFNOSUPPORT    As Long = ZMQ_HAUSNUMERO + 11
+Const ENETUNREACH     As Long = ZMQ_HAUSNUMERO + 12
+Const ECONNABORTED    As Long = ZMQ_HAUSNUMERO + 13
+Const ECONNRESET      As Long = ZMQ_HAUSNUMERO + 14
+Const ENOTCONN        As Long = ZMQ_HAUSNUMERO + 15
+Const ETIMEDOUT       As Long = ZMQ_HAUSNUMERO + 16
+Const EHOSTUNREACH    As Long = ZMQ_HAUSNUMERO + 17
+Const ENETRESET       As Long = ZMQ_HAUSNUMERO + 18
+
+' Native Errors
+Const EFSM            As Long = ZMQ_HAUSNUMERO + 51
+Const ENOCOMPATPROTO  As Long = ZMQ_HAUSNUMERO + 52
+Const ETERM           As Long = ZMQ_HAUSNUMERO + 53
+Const EMTHREAD        As Long = ZMQ_HAUSNUMERO + 54
 
 ' Type Callback Function
 Type ZmqThreadFnProc As Sub(Byval thread_ As Any Ptr)

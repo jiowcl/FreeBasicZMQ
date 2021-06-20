@@ -13,6 +13,8 @@
 #Include Once "Socket.bi"
 #Include Once "Helper.bi"
 
+#Pragma Once
+
 ' Declare Enum LIB_WRAPPER
 Enum LIB_WRAPPER
     OPT_DLLOPEN  = 1
