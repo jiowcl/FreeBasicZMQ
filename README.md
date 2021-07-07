@@ -6,9 +6,9 @@ ZMQ Wrapper for FreeBasic Programming Language.
 
 ## Environment
 
-- Windows 7 above (recommend)
-- FreeBasic 1.0 above (recommend)
-- [ZeroMQ](https://github.com/zeromq)
+- Windows 7 above (recommend)  
+- FreeBasic 1.0 above (recommend)  
+- [ZeroMQ](https://github.com/zeromq)  
 
 ## How to Build
 
@@ -158,12 +158,11 @@ End If
 ## License
 
 Copyright (c) 2017-2021 Ji-Feng Tsai.  
-
-Code released under the MIT license.
+Code released under the MIT license.  
 
 ## TODO
 
-- More examples
+- More examples  
 
 ## Donation
 
