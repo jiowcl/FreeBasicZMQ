@@ -19,7 +19,7 @@ Building requires FreeBasic Compiler and test under Windows 10.
 Publisher Server
 
 ```bash
-fbc PubServer.bas
+fbc PubServer.bas -target win64
 ```
 
 ```freebasic
@@ -95,7 +95,7 @@ End If
 Subscribe Client
 
 ```bash
-fbc SubClient.bas
+fbc SubClient.bas -target win64
 ```
 
 ```freebasic
