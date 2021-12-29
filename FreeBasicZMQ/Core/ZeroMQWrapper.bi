@@ -30,7 +30,7 @@ public:
     Declare Static Function DllClose() As Boolean
     Declare Static Function DllInstance() As Any Ptr
 private:
-    Declare Static Function Instance(Byval Opt As Integer, Byval lpszDllPath As String = "") As Any Ptr
+    Declare Static Function Instance(Byval opt As Integer, Byval lpszDllPath As String = "") As Any Ptr
     Dim As Integer ErrorCode
 End Type
 
@@ -131,8 +131,10 @@ End Function
 ' <summary>
 ' Instance
 ' </summary>
+' <param name="opt"></param>
+' <param name="lpszDllPath"></param>
 ' <returns>Returns any ptr.</returns>
-Static Function LibZMQWrapper.Instance(Byval Opt As Integer, Byval lpszDllPath As String = "") As Any Ptr
+Static Function LibZMQWrapper.Instance(Byval opt As Integer, Byval lpszDllPath As String = "") As Any Ptr
     Static LibDllPath As String
     Static LibDllInstancePtr As Any Ptr
 
