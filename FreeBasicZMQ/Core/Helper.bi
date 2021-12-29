@@ -10,7 +10,7 @@ Declare Function ZmqStopwatchStart(Byval dllInstance As Any Ptr) As Any Ptr
 Declare Function ZmqStopwatchIntermediate(Byval dllInstance As Any Ptr, Byval watch_ As Any Ptr) As Culong
 Declare Function ZmqStopwatchStop(Byval dllInstance As Any Ptr, Byval watch_ As Any Ptr) As CUlong
 Declare Sub ZmqSleep(Byval dllInstance As Any Ptr, Byval seconds_ As Long)
-Declare Function ZmqThreadstart(Byval dllInstance As Any Ptr, Byval func_ As Sub(Byval As Any Ptr), Byval arg_ As Any Ptr) As Any Ptr
+Declare Function ZmqThreadstart(Byval dllInstance As Any Ptr, Byval func_ As ZmqThreadFnProc, Byval arg_ As Any Ptr) As Any Ptr
 Declare Sub ZmqThreadclose(Byval dllInstance As Any Ptr, Byval thread_ As Any Ptr)
 
 ' Zmq Function Declare

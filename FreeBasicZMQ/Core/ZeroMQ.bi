@@ -11,4 +11,5 @@
 #Include Once "Runtime.bi"
 #Include Once "Context.bi"
 #Include Once "Socket.bi"
+#Include Once "Msg.bi"
 #Include Once "Helper.bi"

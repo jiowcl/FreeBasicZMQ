@@ -8,13 +8,13 @@
 Dim lpszCurrentDir As String = Curdir()
 
 ' Libzmq version (x86/x64)
-#ifdef __FB_WIN32__
-    Dim lpszLibZmqDir As String = "/Library/x86"
+#ifdef __FB_64BIT__
+    Dim lpszLibZmqDir As String = "/Library/x64"
     Dim lpszLibZmqDll As String = lpszCurrentDir & lpszLibZmqDir & "/libzmq.dll"
   
     Chdir(lpszCurrentDir & lpszLibZmqDir)
 #else
-    Dim lpszLibZmqDir As String = "/Library/x64"
+    Dim lpszLibZmqDir As String = "/Library/x86"
     Dim lpszLibZmqDll As String = lpszCurrentDir & lpszLibZmqDir & "/libzmq.dll"
   
     Chdir(lpszCurrentDir & lpszLibZmqDir)
@@ -44,7 +44,7 @@ If hLibrary > 0 Then
         ZmqRecv(hLibrary, Socket, lpszTopicBufferPtr, 32, 0)
         ZmqRecv(hLibrary, Socket, lpszRecvBufferPtr, 64, 0)
 
-        Print(*CPtr(Zstring Ptr, lpszRecvBufferPtr))
+        Print(*CPtr(ZString Ptr, lpszRecvBufferPtr))
         
         Deallocate(lpszTopicBufferPtr)
         Deallocate(lpszRecvBufferPtr)

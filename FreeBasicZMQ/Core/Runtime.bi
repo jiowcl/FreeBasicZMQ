@@ -7,7 +7,7 @@
 
 ' Declare Function
 Declare Function ZmqErrno(Byval dllInstance As Any Ptr) As Long
-Declare Function ZmqStrerror(Byval dllInstance As Any Ptr, Byval errnum_ As Integer) As ZString Ptr
+Declare Function ZmqStrerror(Byval dllInstance As Any Ptr, Byval errnum_ As Integer) As Const ZString Ptr
 Declare Sub ZmqVersion(Byval dllInstance As Any Ptr, Byref major As Long, Byref minor As Long, Byref patch As Long)
 
 ' Zmq Function Declare
@@ -38,15 +38,15 @@ End Function
 ' <param name="dllInstance"></param>
 ' <param name="errnum_"></param>
 ' <returns>Returns zstring ptr.</returns>
-Function ZmqStrerror(Byval dllInstance As Any Ptr, Byval errnum_ As Integer) As ZString Ptr
-    Dim lResult As ZString Ptr
-    Dim pFuncCall As Function() As ZString Ptr
+Function ZmqStrerror(Byval dllInstance As Any Ptr, Byval errnum_ As Integer) As Const ZString Ptr
+    Dim lResult As Const ZString Ptr
+    Dim pFuncCall As Function(Byval errnum_ As Integer) As ZString Ptr
   
     If (dllInstance > 0) Then
         pFuncCall = DyLibSymbol(dllInstance, "zmq_strerror")
 
         If (pFuncCall > 0) Then
-            lResult = pFuncCall()
+            lResult = pFuncCall(errnum_)
         End If
     End If
   

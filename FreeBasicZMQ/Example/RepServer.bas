@@ -8,13 +8,13 @@
 Dim lpszCurrentDir As String = Curdir()
 
 ' Libzmq version (x86/x64)
-#ifdef __FB_WIN32__
-    Dim lpszLibZmqDir As String = "/Library/x86"
+#ifdef __FB_64BIT__
+    Dim lpszLibZmqDir As String = "/Library/x64"
     Dim lpszLibZmqDll As String = lpszCurrentDir & lpszLibZmqDir & "/libzmq.dll"
   
     Chdir(lpszCurrentDir & lpszLibZmqDir)
 #else
-    Dim lpszLibZmqDir As String = "/Library/x64"
+    Dim lpszLibZmqDir As String = "/Library/x86"
     Dim lpszLibZmqDll As String = lpszCurrentDir & lpszLibZmqDir & "/libzmq.dll"
   
     Chdir(lpszCurrentDir & lpszLibZmqDir)
@@ -45,7 +45,7 @@ If hLibrary > 0 Then
         Sleep(2)
         
         Print("Received: ")
-        Print(*CPtr(Zstring Ptr, lpszRecvBufferPtr))
+        Print(*CPtr(ZString Ptr, lpszRecvBufferPtr))
         
         lpszSendBufferPtr = CAllocate(Len(lpszSendMessage), SizeOfDefZStringPtr(lpszSendBufferPtr))
         *lpszSendBufferPtr = lpszSendMessage

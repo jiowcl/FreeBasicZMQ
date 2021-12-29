@@ -150,5 +150,11 @@ Const ENOCOMPATPROTO  As Long = ZMQ_HAUSNUMERO + 52
 Const ETERM           As Long = ZMQ_HAUSNUMERO + 53
 Const EMTHREAD        As Long = ZMQ_HAUSNUMERO + 54
 
+' Type
+Type ZmqMsgT
+    __(0 To 63) As UByte
+End Type
+
 ' Type Callback Function
 Type ZmqThreadFnProc As Sub(Byval thread_ As Any Ptr)
+Type ZmqFreeFnProc As Sub(Byval data_ As Any Ptr, Byval hint_ As Any Ptr)

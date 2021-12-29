@@ -3,6 +3,7 @@
 '  Code released under the MIT license.
 '--------------------------------------------------------------------------------------------
 
+#Include "crt/string.bi"
 #Include "../../Core/Enums.bi"
 #Include "../../Core/ZeroMQWrapper.bi"
 
@@ -26,6 +27,7 @@ Const lpszServerClientAddr As String = "tcp://localhost:1700"
 
 Dim Shared ZmqContextRec As LibZmqContext
 Dim Shared ZmqSocketRec As LibZmqSocket
+Dim Shared ZmqMsgRec As LibZmqMsg
 Dim Shared ZmqHelperRec As LibZmqHelper
 
 ' Rep Server
@@ -35,26 +37,27 @@ Sub TestZmqThreadRepProc(Byval vData As Any Ptr)
     Print("Bind an IP address: " & lpszServerAddr)
     
     While 1
-        Dim lpszRecvBufferPtr As Any Ptr = CAllocate(32)
-        Dim lpszSendBufferPtr As ZString Ptr
+        Dim vMsgRecv As ZmqMsgT Ptr
+
+        ZmqMsgRec.Init(vMsgRecv)
+
+        If ZmqMsgRec.Recv(vMsgRecv, Socket, 0) > 0 Then
+            Print("Received: " & *CPtr(ZString Ptr, ZmqMsgRec.Data(vMsgRecv)))
+        End If
+
+        ZmqMsgRec.Close(vMsgRecv)
+
+        Sleep(1)
+
+        Dim vMsgSend As ZmqMsgT Ptr
         Dim lpszSendMessage As String = "Hi"
 
-        ZmqSocketRec.Recv(Socket, lpszRecvBufferPtr, 32, 0)
+        ZmqMsgRec.InitSize(vMsgSend, Len(lpszSendMessage))
 
-        Sleep(2)
+        MemCpy(ZmqMsgRec.Data(vMsgSend), StrPtr(lpszSendMessage), Len(lpszSendMessage))
 
-        lpszSendBufferPtr = CAllocate(Len(lpszSendMessage), SizeOfDefZStringPtr(lpszSendBufferPtr))
-        *lpszSendBufferPtr = lpszSendMessage
-
-        ZmqSocketRec.Send(Socket, lpszSendBufferPtr, Len(lpszSendMessage), 0)
-
-        Print("Received: " & *CPtr(ZString Ptr, lpszRecvBufferPtr))
-
-        Deallocate(lpszRecvBufferPtr) 
-        Deallocate(lpszSendBufferPtr) 
-
-        lpszRecvBufferPtr = 0
-        lpszSendBufferPtr = 0
+        ZmqMsgRec.Send(vMsgSend, Socket, 0)
+        ZmqMsgRec.Close(vMsgSend)
     Wend
 End Sub
 
@@ -65,28 +68,43 @@ Sub TestZmqThreadReqProc(Byval vData As Any Ptr)
     
     Print("Connect to Server: " & lpszServerAddr)
     
+    Static vMsgSend As ZmqMsgT Ptr
+    Static vMsgRecv As ZmqMsgT Ptr
+
     For i = 0 To 20
         Dim lpszSendBufferPtr As ZString Ptr
-        Dim lpszRecvBufferPtr As Any Ptr = CAllocate(32)
         Dim lpszSendMessage As String = "From Client"
+        Dim lpszSendMessageSize As Long = Len(lpszSendMessage)
 
-        lpszSendBufferPtr = CAllocate(Len(lpszSendMessage), SizeOfDefZStringPtr(lpszSendBufferPtr))
+        lpszSendBufferPtr = CAllocate(lpszSendMessageSize, SizeOfDefZStringPtr(lpszSendBufferPtr))
         *lpszSendBufferPtr = lpszSendMessage
 
-        ZmqSocketRec.Send(Socket, lpszSendBufferPtr, Len(lpszSendMessage), 0)
+        ZmqMsgRec.InitSize(vMsgSend, lpszSendMessageSize)
+
+        MemCpy(ZmqMsgRec.Data(vMsgSend), lpszSendBufferPtr, lpszSendMessageSize)
+
+        ZmqMsgRec.Send(vMsgSend, Socket, 0)
+        ZmqMsgRec.Close(vMsgSend)
+
+        Deallocate(lpszSendBufferPtr)
 
         Sleep(1)
 
-        ZmqSocketRec.Recv(Socket, lpszRecvBufferPtr, 32, 0)
+        ZmqMsgRec.Init(vMsgRecv)
 
-        Print("Reply From Server: ")
-        Print(*CPtr(ZString Ptr, lpszRecvBufferPtr))
+        If ZmqMsgRec.Recv(vMsgRecv, Socket, 0) > 0 Then
+            Dim lpszRecvBufferSize As Long = ZmqMsgRec.Size(vMsgRecv)
+            Dim lpszRecvBufferPtr As ZString Ptr = CAllocate(lpszRecvBufferSize)
 
-        Deallocate(lpszSendBufferPtr) 
-        Deallocate(lpszRecvBufferPtr) 
+            MemCpy(lpszRecvBufferPtr, ZmqMsgRec.Data(vMsgRecv), lpszRecvBufferSize)
 
-        lpszSendBufferPtr = 0
-        lpszRecvBufferPtr = 0
+            Print("Reply From Server: ")
+            Print(*CPtr(ZString Ptr, lpszRecvBufferPtr))
+
+            Deallocate(lpszRecvBufferPtr)
+        End If
+
+        ZmqMsgRec.Close(vMsgRecv)
     Next
 End Sub
 

@@ -3,6 +3,7 @@
 '  Code released under the MIT license.
 '--------------------------------------------------------------------------------------------
 
+#Include "crt/string.bi"
 #Include "../Core/ZeroMQ.bi"
 
 Dim lpszCurrentDir As String = Curdir()
@@ -41,26 +42,27 @@ Sub TestZmqThreadRepProc(Byval vData As Any Ptr)
     Print("Bind an IP address: " & lpszServerAddr)
     
     While 1
-        Dim lpszRecvBufferPtr As Any Ptr = CAllocate(32)
-        Dim lpszSendBufferPtr As ZString Ptr
+        Dim vMsgRecv As ZmqMsgT Ptr
+
+        ZmqMsgInit(dllInstance, vMsgRecv)
+
+        If ZmqMsgRecv(dllInstance, vMsgRecv, Socket, 0) > 0 Then
+            Print("Received: " & *CPtr(ZString Ptr, ZmqMsgData(dllInstance, vMsgRecv)))
+        End If
+
+        ZmqMsgClose(dllInstance, vMsgRecv)
+
+        Sleep(1)
+
+        Dim vMsgSend As ZmqMsgT Ptr
         Dim lpszSendMessage As String = "Hi"
 
-        ZmqRecv(dllInstance, Socket, lpszRecvBufferPtr, 32, 0)
+        ZmqMsgInitSize(dllInstance, vMsgSend, Len(lpszSendMessage))
 
-        Sleep(2)
+        MemCpy(ZmqMsgData(dllInstance, vMsgSend), StrPtr(lpszSendMessage), Len(lpszSendMessage))
 
-        lpszSendBufferPtr = CAllocate(Len(lpszSendMessage), SizeOfDefZStringPtr(lpszSendBufferPtr))
-        *lpszSendBufferPtr = lpszSendMessage
-
-        ZmqSend(dllInstance, Socket, lpszSendBufferPtr, Len(lpszSendMessage), 0)
-
-        Print("Received: " & *CPtr(ZString Ptr, lpszRecvBufferPtr))
-
-        Deallocate(lpszRecvBufferPtr) 
-        Deallocate(lpszSendBufferPtr) 
-
-        lpszRecvBufferPtr = 0
-        lpszSendBufferPtr = 0
+        ZmqMsgSend(dllInstance, vMsgSend, Socket, 0)
+        ZmqMsgClose(dllInstance, vMsgSend)
     Wend
 End Sub
 
@@ -71,29 +73,44 @@ Sub TestZmqThreadReqProc(Byval vData As Any Ptr)
     Dim i As Integer
     
     Print("Connect to Server: " & lpszServerAddr)
-    
+
+    Static vMsgSend As ZmqMsgT Ptr
+    Static vMsgRecv As ZmqMsgT Ptr
+
     For i = 0 To 20
         Dim lpszSendBufferPtr As ZString Ptr
-        Dim lpszRecvBufferPtr As Any Ptr = CAllocate(32)
         Dim lpszSendMessage As String = "From Client"
+        Dim lpszSendMessageSize As Long = Len(lpszSendMessage)
 
-        lpszSendBufferPtr = CAllocate(Len(lpszSendMessage), SizeOfDefZStringPtr(lpszSendBufferPtr))
+        lpszSendBufferPtr = CAllocate(lpszSendMessageSize, SizeOfDefZStringPtr(lpszSendBufferPtr))
         *lpszSendBufferPtr = lpszSendMessage
 
-        ZmqSend(dllInstance, Socket, lpszSendBufferPtr, Len(lpszSendMessage), 0)
+        ZmqMsgInitSize(dllInstance, vMsgSend, lpszSendMessageSize)
+
+        MemCpy(ZmqMsgData(dllInstance, vMsgSend), lpszSendBufferPtr, lpszSendMessageSize)
+
+        ZmqMsgSend(dllInstance, vMsgSend, Socket, 0)
+        ZmqMsgClose(dllInstance, vMsgSend)
+
+        Deallocate(lpszSendBufferPtr)
 
         Sleep(1)
 
-        ZmqRecv(dllInstance, Socket, lpszRecvBufferPtr, 32, 0)
+        ZmqMsgInit(dllInstance, vMsgRecv)
 
-        Print("Reply From Server: ")
-        Print(*CPtr(ZString Ptr, lpszRecvBufferPtr))
+        If ZmqMsgRecv(dllInstance, vMsgRecv, Socket, 0) > 0 Then
+            Dim lpszRecvBufferSize As Long = ZmqMsgSize(dllInstance, vMsgRecv)
+            Dim lpszRecvBufferPtr As ZString Ptr = CAllocate(lpszRecvBufferSize)
 
-        Deallocate(lpszSendBufferPtr) 
-        Deallocate(lpszRecvBufferPtr) 
+            MemCpy(lpszRecvBufferPtr, ZmqMsgData(dllInstance, vMsgRecv), lpszRecvBufferSize)
 
-        lpszSendBufferPtr = 0
-        lpszRecvBufferPtr = 0
+            Print("Reply From Server: ")
+            Print(*CPtr(ZString Ptr, lpszRecvBufferPtr))
+
+            Deallocate(lpszRecvBufferPtr)
+        End If
+
+        ZmqMsgClose(dllInstance, vMsgRecv)
     Next
 End Sub
 
@@ -108,7 +125,7 @@ If hLibrary > 0 Then
 
     Dim threadRepPtr As Any Ptr = ZmqThreadstart(hLibrary, @TestZmqThreadRepProc, SocketRep)
     Dim threadReqPtr As Any Ptr = ZmqThreadstart(hLibrary, @TestZmqThreadReqProc, SocketReq)
-    
+
     Input("")
     
     ZmqThreadclose(hLibrary, threadRepPtr)

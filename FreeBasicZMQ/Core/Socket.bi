@@ -7,15 +7,15 @@
 
 ' Prototype Function
 Declare Function ZmqSocket(Byval dllInstance As Any Ptr, Byval s As Any Ptr, Byval stype As Long) As Any Ptr
-Declare Function ZmqBind(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval addr As ZString Ptr) As Long
-Declare Function ZmqUnBind(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval addr As ZString Ptr) As Long
-Declare Function ZmqRecv(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval buf As Any Ptr, Byval buflen As Uinteger, Byval flags As Long) As Long
-Declare Function ZmqSend(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval buf As Any Ptr, Byval buflen As Uinteger, Byval flags As Long) As Long
-Declare Function ZmqSendConst(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval buf As Any Ptr, Byval buflen As Uinteger, Byval flags As Long) As Long
-Declare Function ZmqConnect(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval addr As ZString Ptr) As Long
-Declare Function ZmqDisConnect(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval addr As ZString Ptr) As Long
-Declare Function ZmqSetsockopt(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval options As Long, Byval optval As Any Ptr, Byval optvallen As Uinteger) As Long
-Declare Function ZmqGetsockopt(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval options As Long, Byref optval As String, Byval optvallen As Uinteger) As Long
+Declare Function ZmqBind(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval addr As Const ZString Ptr) As Long
+Declare Function ZmqUnBind(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval addr As Const ZString Ptr) As Long
+Declare Function ZmqRecv(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval buf As Any Ptr, Byval buflen As UInteger, Byval flags As Long) As Long
+Declare Function ZmqSend(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval buf As Any Ptr, Byval buflen As UInteger, Byval flags As Long) As Long
+Declare Function ZmqSendConst(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval buf As Any Ptr, Byval buflen As UInteger, Byval flags As Long) As Long
+Declare Function ZmqConnect(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval addr As Const ZString Ptr) As Long
+Declare Function ZmqDisConnect(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval addr As Const ZString Ptr) As Long
+Declare Function ZmqSetsockopt(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval options As Long, Byval optval As Any Ptr, Byval optvallen As UInteger) As Long
+Declare Function ZmqGetsockopt(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval options As Long, Byref optval As String, Byval optvallen As UInteger) As Long
 Declare Function ZmqClose(Byval dllInstance As Any Ptr, Byval socket As Any Ptr) As Long
 
 ' Zmq Function Declare
@@ -49,9 +49,9 @@ End Function
 ' <param name="socket"></param>
 ' <param name="addr"></param>
 ' <returns>Returns long.</returns>
-Function ZmqBind(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval addr As ZString Ptr) As Long
+Function ZmqBind(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval addr As Const ZString Ptr) As Long
     Dim lResult As Long
-    Dim pFuncCall As Function(Byval socket As Any Ptr, Byval addr As ZString Ptr) As Long
+    Dim pFuncCall As Function(Byval socket As Any Ptr, Byval addr As Const ZString Ptr) As Long
     
     If (dllInstance > 0) Then
         pFuncCall = DyLibSymbol(dllInstance, "zmq_bind")
@@ -71,9 +71,9 @@ End Function
 ' <param name="socket"></param>
 ' <param name="addr"></param>
 ' <returns>Returns long.</returns>
-Function ZmqUnBind(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval addr As ZString Ptr) As Long
+Function ZmqUnBind(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval addr As Const ZString Ptr) As Long
     Dim lResult As Long
-    Dim pFuncCall As Function(Byval socket As Any Ptr, Byval addr As ZString Ptr) As Long
+    Dim pFuncCall As Function(Byval socket As Any Ptr, Byval addr As Const ZString Ptr) As Long
     
     If (dllInstance > 0) Then
         pFuncCall = DyLibSymbol(dllInstance, "zmq_unbind")
@@ -165,9 +165,9 @@ End Function
 ' <param name="socket"></param>
 ' <param name="addr"></param>
 ' <returns>Returns long.</returns>
-Function ZmqConnect(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval addr As ZString Ptr) As Long
+Function ZmqConnect(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval addr As Const ZString Ptr) As Long
     Dim lResult As Long
-    Dim pFuncCall As Function(Byval socket As Any Ptr, Byval addr As ZString Ptr) As Long
+    Dim pFuncCall As Function(Byval socket As Any Ptr, Byval addr As Const ZString Ptr) As Long
     
     If (dllInstance > 0) Then
         pFuncCall = DyLibSymbol(dllInstance, "zmq_connect")
@@ -187,9 +187,9 @@ End Function
 ' <param name="socket"></param>
 ' <param name="addr"></param>
 ' <returns>Returns long.</returns>
-Function ZmqDisConnect(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval addr As ZString Ptr) As Long
+Function ZmqDisConnect(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval addr As Const ZString Ptr) As Long
     Dim lResult As Long
-    Dim pFuncCall As Function(Byval socket As Any Ptr, Byval addr As ZString Ptr) As Long
+    Dim pFuncCall As Function(Byval socket As Any Ptr, Byval addr As Const ZString Ptr) As Long
     
     If (dllInstance > 0) Then
         pFuncCall = DyLibSymbol(dllInstance, "zmq_disconnect")
