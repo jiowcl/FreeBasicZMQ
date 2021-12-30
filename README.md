@@ -3,6 +3,7 @@
 ZMQ Wrapper for FreeBasic Programming Language.
 
 ![GitHub](https://img.shields.io/github/license/jiowcl/FreeBasicZMQ.svg)
+![FreeBasic](https://img.shields.io/badge/language-FreeBasic-blue.svg)
 
 ## Environment
 
