@@ -5,6 +5,11 @@
 
 #Pragma Once
 
+' Version Macros for Compile-time API Version Detection 
+Const ZMQ_VERSION_MAJOR As Long = 4
+Const ZMQ_VERSION_MINOR As Long = 3
+Const ZMQ_VERSION_PATCH As Long = 4
+
 ' Socket Types
 Const ZMQ_PAIR   As Long = 0
 Const ZMQ_PUB    As Long = 1
