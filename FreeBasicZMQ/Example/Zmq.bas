@@ -30,8 +30,9 @@ If hLibrary > 0 Then
     ZmqVersion(hLibrary, major, minor, patch)
 
     Print("Zmq Version: " & major & minor & patch)
-
-    Input("")
-  
+ 
     ZmqDllClose(hLibrary)
 End If
+
+Print("Press any key to continue...")
+Sleep()

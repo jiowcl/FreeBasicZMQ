@@ -30,8 +30,9 @@ If hLibrary > 0 Then
     Dim stopwatchResult As Long = ZmqStopwatchStop(hLibrary, stopwatch)
     
     Print("Stopwatch Time: " & stopwatchResult)
-    
-    Input("")
-    
+       
     ZmqDllClose(hLibrary)
 End If
+
+Print("Press any key to continue...")
+Sleep()

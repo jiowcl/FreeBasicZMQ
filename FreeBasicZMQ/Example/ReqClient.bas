@@ -56,8 +56,9 @@ If hLibrary > 0 Then
     
     ZmqClose(hLibrary, Socket)
     ZmqCtxShutdown(hLibrary, Context)
-    
-    Input("")
-    
+       
     ZmqDllClose(hLibrary)
 End If
+
+Print("Press any key to continue...")
+Sleep()

@@ -59,8 +59,9 @@ If LibZMQWrapper.DllOpen(lpszLibZmqDll) Then
     
     ZmqSocketRec.Close(Socket)
     ZmqContextRec.Shutdown(Context)
-    
-    Input("")
-    
+       
     LibZMQWrapper.DllClose()
 End If
+
+Print("Press any key to continue...")
+Sleep()

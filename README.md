@@ -8,7 +8,7 @@ ZMQ Wrapper for FreeBasic Programming Language.
 ## Environment
 
 - Windows 7 above (recommend)  
-- FreeBasic 1.0 above (recommend)  
+- FreeBasic 1.10.1 above (recommend)  
 - [ZeroMQ](https://github.com/zeromq)  
 
 ## How to Build
@@ -150,15 +150,13 @@ If LibZMQWrapper.DllOpen(lpszLibZmqDll) Then
     ZmqSocketRec.Close(Socket)
     ZmqContextRec.Shutdown(Context)
     
-    Input("")
-
     LibZMQWrapper.DllClose()
 End If
 ```
 
 ## License
 
-Copyright (c) 2017-2023 Ji-Feng Tsai.  
+Copyright (c) 2017-2024 Ji-Feng Tsai.  
 Code released under the MIT license.  
 
 ## TODO

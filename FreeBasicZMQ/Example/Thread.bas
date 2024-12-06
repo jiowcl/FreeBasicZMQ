@@ -108,9 +108,7 @@ If hLibrary > 0 Then
 
     Dim threadRepPtr As Any Ptr = ZmqThreadstart(hLibrary, @TestZmqThreadRepProc, SocketRep)
     Dim threadReqPtr As Any Ptr = ZmqThreadstart(hLibrary, @TestZmqThreadReqProc, SocketReq)
-    
-    Input("")
-    
+       
     ZmqThreadclose(hLibrary, threadRepPtr)
     ZmqThreadclose(hLibrary, threadReqPtr)
     
@@ -122,3 +120,6 @@ If hLibrary > 0 Then
     
     ZmqDllClose(hLibrary)
 End If
+
+Print("Press any key to continue...")
+Sleep()

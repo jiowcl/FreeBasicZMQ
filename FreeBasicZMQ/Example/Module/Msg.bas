@@ -119,9 +119,7 @@ If LibZMQWrapper.DllOpen(lpszLibZmqDll) Then
 
     Dim threadRepPtr As Any Ptr = ZmqHelperRec.Threadstart(@TestZmqThreadRepProc, SocketRep)
     Dim threadReqPtr As Any Ptr = ZmqHelperRec.Threadstart(@TestZmqThreadReqProc, SocketReq)
-    
-    Input("")
-    
+       
     ZmqHelperRec.Threadclose(threadRepPtr)
     ZmqHelperRec.Threadclose(threadReqPtr)
     
@@ -133,3 +131,6 @@ If LibZMQWrapper.DllOpen(lpszLibZmqDll) Then
     
     LibZMQWrapper.DllClose()
 End If
+
+Print("Press any key to continue...")
+Sleep()
