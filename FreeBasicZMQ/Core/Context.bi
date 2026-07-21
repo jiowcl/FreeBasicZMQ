@@ -17,7 +17,7 @@ Declare Function ZmqCtxGet(Byval dllInstance As Any Ptr, Byval context As Any Pt
 ' <summary>
 ' ZmqCtxNew
 ' </summary>
-' <param name="dllInstance"></param>
+' <param name="dllInstance">Ptr</param>
 ' <returns>Returns any ptr.</returns>
 Function ZmqCtxNew(Byval dllInstance As Any Ptr) As Any Ptr
     Dim lResult As Any Ptr
@@ -37,8 +37,8 @@ End Function
 ' <summary>
 ' ZmqCtxTerm
 ' </summary>
-' <param name="dllInstance"></param>
-' <param name="context"></param>
+' <param name="dllInstance">Ptr</param>
+' <param name="context">Ptr</param>
 ' <returns>Returns long.</returns>
 Function ZmqCtxTerm(Byval dllInstance As Any Ptr, Byval context As Any Ptr) As Long
     Dim lResult As Long
@@ -58,8 +58,8 @@ End Function
 ' <summary>
 ' ZmqCtxShutdown
 ' </summary>
-' <param name="dllInstance"></param>
-' <param name="context"></param>
+' <param name="dllInstance">Ptr</param>
+' <param name="context">Ptr</param>
 ' <returns>Returns long.</returns>
 Function ZmqCtxShutdown(Byval dllInstance As Any Ptr, Byval context As Any Ptr) As Long
     Dim lResult As Long
@@ -79,10 +79,10 @@ End Function
 ' <summary>
 ' ZmqCtxSet
 ' </summary>
-' <param name="dllInstance"></param>
-' <param name="context"></param>
-' <param name="options"></param>
-' <param name="optval"></param>
+' <param name="dllInstance">Ptr</param>
+' <param name="context">Ptr</param>
+' <param name="options">Long</param>
+' <param name="optval">Long</param>
 ' <returns>Returns long.</returns>
 Function ZmqCtxSet(Byval dllInstance As Any Ptr, Byval context As Any Ptr, Byval options As Long, Byval optval As Long) As Long
     Dim lResult As Long
@@ -102,9 +102,9 @@ End Function
 ' <summary>
 ' ZmqCtxGet
 ' </summary>
-' <param name="dllInstance"></param>
-' <param name="context"></param>
-' <param name="options"></param>
+' <param name="dllInstance">Ptr</param>
+' <param name="context">Ptr</param>
+' <param name="options">Long</param>
 ' <returns>Returns long.</returns>
 Function ZmqCtxGet(Byval dllInstance As Any Ptr, Byval context As Any Ptr, Byval options As Long) As Long
     Dim lResult As Long

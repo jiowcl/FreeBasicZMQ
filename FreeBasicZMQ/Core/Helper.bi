@@ -18,7 +18,7 @@ Declare Sub ZmqThreadclose(Byval dllInstance As Any Ptr, Byval thread_ As Any Pt
 ' <summary>
 ' ZmqStopwatchStart
 ' </summary>
-' <param name="dllInstance"></param>
+' <param name="dllInstance">Ptr</param>
 ' <returns>Returns any ptr.</returns>
 Function ZmqStopwatchStart(Byval dllInstance As Any Ptr) As Any Ptr
     Dim lResult As Any Ptr
@@ -38,8 +38,8 @@ End Function
 ' <summary>
 ' ZmqStopwatchIntermediate
 ' </summary>
-' <param name="dllInstance"></param>
-' <param name="watch_"></param>
+' <param name="dllInstance">Ptr</param>
+' <param name="watch_">Ptr</param>
 ' <returns>Returns CUlong.</returns>
 Function ZmqStopwatchIntermediate(Byval dllInstance As Any Ptr, Byval watch_ As Any Ptr) As CUlong
     Dim lResult As CUlong
@@ -59,8 +59,8 @@ End Function
 ' <summary>
 ' ZmqStopwatchStop
 ' </summary>
-' <param name="dllInstance"></param>
-' <param name="watch_"></param>
+' <param name="dllInstance">Ptr</param>
+' <param name="watch_">Ptr</param>
 ' <returns>Returns CUlong.</returns>
 Function ZmqStopwatchStop(Byval dllInstance As Any Ptr, Byval watch_ As Any Ptr) As CUlong
     Dim lResult As CUlong
@@ -80,8 +80,8 @@ End Function
 ' <summary>
 ' ZmqSleep
 ' </summary>
-' <param name="dllInstance"></param>
-' <param name="seconds_"></param>
+' <param name="dllInstance">Ptr</param>
+' <param name="seconds_">Long</param>
 ' <returns>Returns void.</returns>
 Sub ZmqSleep(Byval dllInstance As Any Ptr, Byval seconds_ As Long)
     Dim pFuncCall As Function(Byval seconds_ As Long) As CUlong
@@ -98,9 +98,9 @@ End Sub
 ' <summary>
 ' ZmqThreadstart
 ' </summary>
-' <param name="dllInstance"></param>
-' <param name="*func_"></param>
-' <param name="arg_"></param>
+' <param name="dllInstance">Ptr</param>
+' <param name="*func_">ZmqThreadFnProc</param>
+' <param name="arg_">Ptr</param>
 ' <returns>Returns any ptr.</returns>
 Function ZmqThreadstart(Byval dllInstance As Any Ptr, Byval func_ As ZmqThreadFnProc, Byval arg_ As Any Ptr) As Any Ptr
     Dim lResult As Any Ptr
@@ -120,8 +120,8 @@ End Function
 ' <summary>
 ' ZmqThreadclose
 ' </summary>
-' <param name="dllInstance"></param>
-' <param name="thread_"></param>
+' <param name="dllInstance">Ptr</param>
+' <param name="thread_">Ptr</param>
 ' <returns>Returns void.</returns>
 Sub ZmqThreadclose(Byval dllInstance As Any Ptr, Byval thread_ As Any Ptr)
     Dim pFuncCall As Sub(Byval thread_ As Any Ptr)

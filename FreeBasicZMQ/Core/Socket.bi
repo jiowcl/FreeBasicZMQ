@@ -23,9 +23,9 @@ Declare Function ZmqClose(Byval dllInstance As Any Ptr, Byval socket As Any Ptr)
 ' <summary>
 ' ZmqSocket
 ' </summary>
-' <param name="dllInstance"></param>
-' <param name="s"></param>
-' <param name="stype"></param>
+' <param name="dllInstance">Ptr</param>
+' <param name="s">Ptr</param>
+' <param name="stype">Long</param>
 ' <returns>Returns any ptr.</returns>
 Function ZmqSocket(Byval dllInstance As Any Ptr, Byval s As Any Ptr, Byval stype As Long) As Any Ptr
     Dim lResult As Any Ptr
@@ -45,9 +45,9 @@ End Function
 ' <summary>
 ' ZmqBind
 ' </summary>
-' <param name="dllInstance"></param>
-' <param name="socket"></param>
-' <param name="addr"></param>
+' <param name="dllInstance">Ptr</param>
+' <param name="socket">Ptr</param>
+' <param name="addr">Const ZString Ptr</param>
 ' <returns>Returns long.</returns>
 Function ZmqBind(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval addr As Const ZString Ptr) As Long
     Dim lResult As Long
@@ -67,9 +67,9 @@ End Function
 ' <summary>
 ' ZmqUnBind
 ' </summary>
-' <param name="dllInstance"></param>
-' <param name="socket"></param>
-' <param name="addr"></param>
+' <param name="dllInstance">Ptr</param>
+' <param name="socket">Ptr</param>
+' <param name="addr">Const ZString Ptr</param>
 ' <returns>Returns long.</returns>
 Function ZmqUnBind(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval addr As Const ZString Ptr) As Long
     Dim lResult As Long
@@ -89,11 +89,11 @@ End Function
 ' <summary>
 ' ZmqRecv
 ' </summary>
-' <param name="dllInstance"></param>
-' <param name="socket"></param>
-' <param name="buf"></param>
-' <param name="buflen"></param>
-' <param name="flags"></param>
+' <param name="dllInstance">Ptr</param>
+' <param name="socket">Ptr</param>
+' <param name="buf">Ptr</param>
+' <param name="buflen">Uinteger</param>
+' <param name="flags">Long</param>
 ' <returns>Returns long.</returns>
 Function ZmqRecv(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval buf As Any Ptr, Byval buflen As Uinteger, Byval flags As Long) As Long
     Dim lResult As Long
@@ -113,11 +113,11 @@ End Function
 ' <summary>
 ' ZmqSend
 ' </summary>
-' <param name="dllInstance"></param>
-' <param name="socket"></param>
-' <param name="buf"></param>
-' <param name="buflen"></param>
-' <param name="flags"></param>
+' <param name="dllInstance">Ptr</param>
+' <param name="socket">Ptr</param>
+' <param name="buf">Ptr</param>
+' <param name="buflen">Uinteger</param>
+' <param name="flags">Long</param>
 ' <returns>Returns long.</returns>
 Function ZmqSend(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval buf As Any Ptr, Byval buflen As Uinteger, Byval flags As Long) As Long
     Dim lResult As Long
@@ -137,11 +137,11 @@ End Function
 ' <summary>
 ' ZmqSendConst
 ' </summary>
-' <param name="dllInstance"></param>
-' <param name="socket"></param>
-' <param name="buf"></param>
-' <param name="buflen"></param>
-' <param name="flags"></param>
+' <param name="dllInstance">Ptr</param>
+' <param name="socket">Ptr</param>
+' <param name="buf">Ptr</param>
+' <param name="buflen">Uinteger</param>
+' <param name="flags">Long</param>
 ' <returns>Returns long.</returns>
 Function ZmqSendConst(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval buf As Any Ptr, Byval buflen As Uinteger, Byval flags As Long) As Long
     Dim lResult As Long
@@ -161,9 +161,9 @@ End Function
 ' <summary>
 ' ZmqConnect
 ' </summary>
-' <param name="dllInstance"></param>
-' <param name="socket"></param>
-' <param name="addr"></param>
+' <param name="dllInstance">Ptr</param>
+' <param name="socket">Ptr</param>
+' <param name="addr">Const ZString Ptr</param>
 ' <returns>Returns long.</returns>
 Function ZmqConnect(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval addr As Const ZString Ptr) As Long
     Dim lResult As Long
@@ -183,9 +183,9 @@ End Function
 ' <summary>
 ' ZmqDisConnect
 ' </summary>
-' <param name="dllInstance"></param>
-' <param name="socket"></param>
-' <param name="addr"></param>
+' <param name="dllInstance">Ptr</param>
+' <param name="socket">Ptr</param>
+' <param name="addr">Const ZString Ptr</param>
 ' <returns>Returns long.</returns>
 Function ZmqDisConnect(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval addr As Const ZString Ptr) As Long
     Dim lResult As Long
@@ -205,11 +205,11 @@ End Function
 ' <summary>
 ' ZmqSetsockopt
 ' </summary>
-' <param name="dllInstance"></param>
-' <param name="socket"></param>
-' <param name="options"></param>
-' <param name="optval"></param>
-' <param name="optvallen"></param>
+' <param name="dllInstance">Ptr</param>
+' <param name="socket">Ptr</param>
+' <param name="options">Long</param>
+' <param name="optval">Ptr</param>
+' <param name="optvallen">Uinteger</param>
 ' <returns>Returns long.</returns>
 Function ZmqSetsockopt(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval options As Long, Byval optval As Any Ptr, Byval optvallen As Uinteger) As Long
     Dim lResult As Long
@@ -229,11 +229,11 @@ End Function
 ' <summary>
 ' ZmqGetsockopt
 ' </summary>
-' <param name="dllInstance"></param>
-' <param name="socket"></param>
-' <param name="options"></param>
-' <param name="optval"></param>
-' <param name="optvallen"></param>
+' <param name="dllInstance">Ptr</param>
+' <param name="socket">Ptr</param>
+' <param name="options">Long</param>
+' <param name="optval">String</param>
+' <param name="optvallen">Uinteger</param>
 ' <returns>Returns long.</returns>
 Function ZmqGetsockopt(Byval dllInstance As Any Ptr, Byval socket As Any Ptr, Byval options As Long, Byref optval As String, Byval optvallen As Uinteger) As Long
     Dim lResult As Long
@@ -253,8 +253,8 @@ End Function
 ' <summary>
 ' ZmqClose
 ' </summary>
-' <param name="dllInstance"></param>
-' <param name="socket"></param>
+' <param name="dllInstance">Ptr</param>
+' <param name="socket">Ptr</param>
 ' <returns>Returns long.</returns>
 Function ZmqClose(Byval dllInstance As Any Ptr, Byval socket As Any Ptr) As Long
     Dim lResult As Long

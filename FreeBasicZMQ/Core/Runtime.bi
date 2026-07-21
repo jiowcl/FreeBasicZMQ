@@ -15,7 +15,7 @@ Declare Sub ZmqVersion(Byval dllInstance As Any Ptr, Byref major As Long, Byref 
 ' <summary>
 ' ZmqErrno
 ' </summary>
-' <param name="dllInstance"></param>
+' <param name="dllInstance">Ptr</param>
 ' <returns>Returns integer.</returns>
 Function ZmqErrno(Byval dllInstance As Any Ptr) As Long
     Dim lResult As Long
@@ -35,8 +35,8 @@ End Function
 ' <summary>
 ' ZmqStrerror
 ' </summary>
-' <param name="dllInstance"></param>
-' <param name="errnum_"></param>
+' <param name="dllInstance">Ptr</param>
+' <param name="errnum_">Integer</param>
 ' <returns>Returns zstring ptr.</returns>
 Function ZmqStrerror(Byval dllInstance As Any Ptr, Byval errnum_ As Integer) As Const ZString Ptr
     Dim lResult As Const ZString Ptr
@@ -56,10 +56,10 @@ End Function
 ' <summary>
 ' ZmqVersion
 ' </summary>
-' <param name="dllInstance"></param>
-' <param name="major"></param>
-' <param name="minor"></param>
-' <param name="patch"></param>
+' <param name="dllInstance">Ptr</param>
+' <param name="major">Long</param>
+' <param name="minor">Long</param>
+' <param name="patch">Long</param>
 ' <returns>Returns void.</returns>
 Sub ZmqVersion(Byval dllInstance As Any Ptr, Byref major As Long, Byref minor As Long, Byref patch As Long)
     Dim pFuncCall As Sub(Byref major As Long, Byref minor As Long, Byref patch As Long)

@@ -15,7 +15,7 @@ Declare Function SizeOfDefWStringPtr(Byval varToPtr As WString Ptr) As Integer
 ' <summary>
 ' ZmqDllOpen
 ' </summary>
-' <param name="lpszDllPath"></param>
+' <param name="lpszDllPath">String</param>
 ' <returns>Returns any pty.</returns>
 Function ZmqDllOpen(Byval lpszDllPath As String) As Any Ptr
     Function = DyLibLoad(lpszDllPath)
@@ -24,7 +24,7 @@ End Function
 ' <summary>
 ' ZmqDllClose
 ' </summary>
-' <param name="dllInstance"></param>
+' <param name="dllInstance">Ptr</param>
 ' <returns>Returns boolean.</returns>
 Function ZmqDllClose(Byval dllInstance As Any Ptr) As Boolean
     If (dllInstance > 0) Then
@@ -37,7 +37,7 @@ End Function
 ' <summary>
 ' SizeOfDefZStringPtr
 ' </summary>
-' <param name="varToPtr"></param>
+' <param name="varToPtr">ZString Ptr</param>
 ' <returns>Returns integer.</returns>
 Function SizeOfDefZStringPtr(Byval varToPtr As ZString Ptr) As Integer
     Function = SizeOf(*Cast(TypeOf(varToPtr), 0))
@@ -46,7 +46,7 @@ End Function
 ' <summary>
 ' SizeOfDefWStringPtr
 ' </summary>
-' <param name="varToPtr"></param>
+' <param name="varToPtr">WString Ptr</param>
 ' <returns>Returns integer.</returns>
 Function SizeOfDefWStringPtr(Byval varToPtr As WString Ptr) As Integer
     Function = SizeOf(*Cast(TypeOf(varToPtr), 0))
