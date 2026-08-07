@@ -12,6 +12,8 @@
 #Include Once "Context.bi"
 #Include Once "Socket.bi"
 #Include Once "Msg.bi"
+#Include Once "Poll.bi"
+#Include Once "Security.bi"
 #Include Once "Helper.bi"
 
 #Pragma Once
@@ -40,6 +42,7 @@ public:
     Declare Function Errno() As Long
     Declare Function Strerror(Byval errnum_ As Integer) As Const ZString Ptr
     Declare Sub Version(Byref major As Long, Byref minor As Long, Byref patch As Long)
+    Declare Function Has(Byval capability As Const ZString Ptr) As Long
 End Type
 
 ' Declare Type LibZmqContext
@@ -84,6 +87,24 @@ Type LibZmqMsg Extends LibZMQWrapper
     Declare Function Get(Byref msg As Const ZmqMsgT Ptr, Byval property_ As Long) As Long
     Declare Function Set(Byref msg As ZmqMsgT Ptr, Byval property_ As Long, Byval optval As Long) As Long
     Declare Function Gets(Byref msg As Const ZmqMsgT Ptr, Byval property_ As Const ZString Ptr) As Const ZString Ptr
+End Type
+
+' Declare Type LibZmqPoll
+Type LibZmqPoll Extends LibZMQWrapper
+public:
+    Declare Function Poll(Byval items As ZmqPollItemT Ptr, Byval nitems As Long, Byval timeout As Clong) As Long
+End Type
+
+' Declare Type LibZmqSecurity
+Type LibZmqSecurity Extends LibZMQWrapper
+public:
+    Declare Function Z85Encode(Byval dest As Any Ptr, Byval data_ As Any Ptr, Byval size As UInteger) As Any Ptr
+    Declare Function Z85Decode(Byval dest As Any Ptr, Byval string_ As Const ZString Ptr) As Any Ptr
+    Declare Function Z85EncodeStr(Byval data_ As Any Ptr, Byval size As UInteger) As String
+    Declare Function Z85DecodeStr(Byval string_ As String, Byval dest As Any Ptr, Byval destSize As UInteger) As Any Ptr
+    Declare Function CurveKeypair(Byval z85Public As Any Ptr, Byval z85Secret As Any Ptr) As Long
+    Declare Function CurvePublic(Byval z85Public As Any Ptr, Byval z85Secret As Const ZString Ptr) As Long
+    Declare Function CurvePublicStr(Byval z85Secret As String) As String
 End Type
 
 ' Declare Type LibZmqHelper
@@ -194,6 +215,15 @@ End Function
 Sub LibZmqRuntime.Version(Byref major As Long, Byref minor As Long, Byref patch As Long)
     ZmqVersion(LibZMQWrapper.DllInstance(), major, minor, patch)
 End Sub
+
+' <summary>
+' Has
+' </summary>
+' <param name="capability">Const ZString Ptr</param>
+' <returns>Returns long.</returns>
+Function LibZmqRuntime.Has(Byval capability As Const ZString Ptr) As Long
+    Function = ZmqHas(LibZMQWrapper.DllInstance(), capability)
+End Function
 
 ' Type LibZmqContext
   
@@ -506,6 +536,92 @@ End Function
 ' <returns>Returns const zstring ptr.</returns>
 Function LibZmqMsg.Gets(Byref msg As Const ZmqMsgT Ptr, Byval property_ As Const ZString Ptr) As Const ZString Ptr     
     Function = ZmqMsgGets(LibZMQWrapper.DllInstance(), msg, property_)
+End Function
+
+' Type LibZmqPoll
+
+' <summary>
+' Poll
+' </summary>
+' <param name="items">ZmqPollItemT Ptr</param>
+' <param name="nitems">Long</param>
+' <param name="timeout">Clong</param>
+' <returns>Returns long.</returns>
+Function LibZmqPoll.Poll(Byval items As ZmqPollItemT Ptr, Byval nitems As Long, Byval timeout As Clong) As Long
+    Function = ZmqPoll(LibZMQWrapper.DllInstance(), items, nitems, timeout)
+End Function
+
+' Type LibZmqSecurity
+
+' <summary>
+' Z85Encode
+' </summary>
+' <param name="dest">Ptr</param>
+' <param name="data_">Ptr</param>
+' <param name="size">UInteger</param>
+' <returns>Returns any ptr.</returns>
+Function LibZmqSecurity.Z85Encode(Byval dest As Any Ptr, Byval data_ As Any Ptr, Byval size As UInteger) As Any Ptr
+    Function = ZmqZ85Encode(LibZMQWrapper.DllInstance(), dest, data_, size)
+End Function
+
+' <summary>
+' Z85Decode
+' </summary>
+' <param name="dest">Ptr</param>
+' <param name="string_">Const ZString Ptr</param>
+' <returns>Returns any ptr.</returns>
+Function LibZmqSecurity.Z85Decode(Byval dest As Any Ptr, Byval string_ As Const ZString Ptr) As Any Ptr
+    Function = ZmqZ85Decode(LibZMQWrapper.DllInstance(), dest, string_)
+End Function
+
+' <summary>
+' Z85EncodeStr
+' </summary>
+' <param name="data_">Ptr</param>
+' <param name="size">UInteger</param>
+' <returns>Returns string.</returns>
+Function LibZmqSecurity.Z85EncodeStr(Byval data_ As Any Ptr, Byval size As UInteger) As String
+    Function = ZmqZ85EncodeStr(LibZMQWrapper.DllInstance(), data_, size)
+End Function
+
+' <summary>
+' Z85DecodeStr
+' </summary>
+' <param name="string_">String</param>
+' <param name="dest">Ptr</param>
+' <param name="destSize">UInteger</param>
+' <returns>Returns any ptr.</returns>
+Function LibZmqSecurity.Z85DecodeStr(Byval string_ As String, Byval dest As Any Ptr, Byval destSize As UInteger) As Any Ptr
+    Function = ZmqZ85DecodeStr(LibZMQWrapper.DllInstance(), string_, dest, destSize)
+End Function
+
+' <summary>
+' CurveKeypair
+' </summary>
+' <param name="z85Public">Ptr</param>
+' <param name="z85Secret">Ptr</param>
+' <returns>Returns long.</returns>
+Function LibZmqSecurity.CurveKeypair(Byval z85Public As Any Ptr, Byval z85Secret As Any Ptr) As Long
+    Function = ZmqCurveKeypair(LibZMQWrapper.DllInstance(), z85Public, z85Secret)
+End Function
+
+' <summary>
+' CurvePublic
+' </summary>
+' <param name="z85Public">Ptr</param>
+' <param name="z85Secret">Const ZString Ptr</param>
+' <returns>Returns long.</returns>
+Function LibZmqSecurity.CurvePublic(Byval z85Public As Any Ptr, Byval z85Secret As Const ZString Ptr) As Long
+    Function = ZmqCurvePublic(LibZMQWrapper.DllInstance(), z85Public, z85Secret)
+End Function
+
+' <summary>
+' CurvePublicStr
+' </summary>
+' <param name="z85Secret">String</param>
+' <returns>Returns string.</returns>
+Function LibZmqSecurity.CurvePublicStr(Byval z85Secret As String) As String
+    Function = ZmqCurvePublicStr(LibZMQWrapper.DllInstance(), z85Secret)
 End Function
 
 ' Type LibZmqHelper

@@ -128,6 +128,27 @@ Const ZMQ_SHARED As Long = 3
 Const ZMQ_DONTWAIT As Long = 1
 Const ZMQ_SNDMORE  As Long = 2
 
+' I/O Multiplexing
+Const ZMQ_POLLIN  As Long = 1
+Const ZMQ_POLLOUT As Long = 2
+Const ZMQ_POLLERR As Long = 4
+Const ZMQ_POLLPRI As Long = 8
+
+Const ZMQ_POLLITEMS_DFLT As Long = 16
+
+' Capability Probe
+Const ZMQ_HAS_CAPABILITIES As Long = 1
+
+' Security Mechanisms
+Const ZMQ_NULL   As Long = 0
+Const ZMQ_PLAIN  As Long = 1
+Const ZMQ_CURVE  As Long = 2
+Const ZMQ_GSSAPI As Long = 3
+
+' CURVE Key Sizes
+Const ZMQ_CURVE_KEYSIZE     As Long = 32
+Const ZMQ_CURVE_KEYSIZE_Z85 As Long = 40
+
 ' Errors
 Const ZMQ_HAUSNUMERO  As Long = 156384712
 Const ENOTSUP         As Long = ZMQ_HAUSNUMERO + 1
@@ -158,6 +179,17 @@ Const EMTHREAD        As Long = ZMQ_HAUSNUMERO + 54
 ' Type
 Type ZmqMsgT
     __(0 To 63) As UByte
+End Type
+
+' Poll Item Structure (matches libzmq zmq_pollitem_t on Windows)
+Type ZmqPollItemT Field = 1
+    socket As Any Ptr
+    fd As Integer
+    events As Short
+    revents As Short
+#ifdef __FB_64BIT__
+    _padding(0 To 3) As UByte
+#endif
 End Type
 
 ' Type Callback Function

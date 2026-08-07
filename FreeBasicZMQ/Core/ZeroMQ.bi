@@ -12,4 +12,6 @@
 #Include Once "Context.bi"
 #Include Once "Socket.bi"
 #Include Once "Msg.bi"
+#Include Once "Poll.bi"
+#Include Once "Security.bi"
 #Include Once "Helper.bi"
