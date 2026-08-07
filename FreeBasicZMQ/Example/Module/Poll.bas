@@ -32,11 +32,10 @@ If LibZMQWrapper.DllOpen(lpszLibZmqDll) Then
     Dim Context As Any Ptr = ZmqContextRec.NewCtx()
     Dim Socket As Any Ptr = ZmqSocketRec.Socket(Context, ZMQ_PULL)
     Dim Rc As Long = ZmqSocketRec.Bind(Socket, lpszServerAddr)
-    Dim linger As Long = 0
     Dim items As ZmqPollItemT
     Dim i As Long
 
-    ZmqSocketRec.Setsockopt(Socket, ZMQ_LINGER, @linger, SizeOf(linger))
+    ZmqSocketRec.SetsockoptInt(Socket, ZMQ_LINGER, 0)
 
     Print("Bind an IP address: " & lpszServerAddr)
     Print("Polling for 5 timeouts (500 ms each)...")

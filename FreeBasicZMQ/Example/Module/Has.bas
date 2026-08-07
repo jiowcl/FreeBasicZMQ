@@ -35,6 +35,18 @@ If LibZMQWrapper.DllOpen(lpszLibZmqDll) Then
     Print("Has curve: " & ZmqRuntimeRec.Has("curve"))
     Print("Has draft: " & ZmqRuntimeRec.Has("draft"))
 
+    Dim ZmqContextRec As LibZmqContext
+    Dim ZmqSocketRec As LibZmqSocket
+    Dim Context As Any Ptr = ZmqContextRec.NewCtx()
+    Dim Socket As Any Ptr = ZmqSocketRec.Socket(Context, ZMQ_REP)
+    Dim SocketType As Long = 0
+
+    ZmqSocketRec.SetsockoptInt(Socket, ZMQ_LINGER, 0)
+    ZmqSocketRec.GetsockoptInt(Socket, ZMQ_TYPE, SocketType)
+    Print("Socket Type: " & SocketType)
+
+    ZmqSocketRec.Close(Socket)
+    ZmqContextRec.Shutdown(Context)
     LibZMQWrapper.DllClose()
 End If
 

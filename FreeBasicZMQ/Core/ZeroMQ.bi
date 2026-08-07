@@ -13,5 +13,6 @@
 #Include Once "Socket.bi"
 #Include Once "Msg.bi"
 #Include Once "Poll.bi"
+#Include Once "Proxy.bi"
 #Include Once "Security.bi"
 #Include Once "Helper.bi"

@@ -28,11 +28,10 @@ If hLibrary > 0 Then
     Dim Context As Any Ptr = ZmqCtxNew(hLibrary)
     Dim Socket As Any Ptr = ZmqSocket(hLibrary, Context, ZMQ_PULL)
     Dim Rc As Long = ZmqBind(hLibrary, Socket, lpszServerAddr)
-    Dim linger As Long = 0
     Dim items As ZmqPollItemT
     Dim i As Long
 
-    ZmqSetsockopt(hLibrary, Socket, ZMQ_LINGER, @linger, SizeOf(linger))
+    ZmqSetsockoptInt(hLibrary, Socket, ZMQ_LINGER, 0)
 
     Print("Bind an IP address: " & lpszServerAddr)
     Print("Polling for 5 timeouts (500 ms each)...")

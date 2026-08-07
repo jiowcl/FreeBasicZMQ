@@ -13,6 +13,7 @@
 #Include Once "Socket.bi"
 #Include Once "Msg.bi"
 #Include Once "Poll.bi"
+#Include Once "Proxy.bi"
 #Include Once "Security.bi"
 #Include Once "Helper.bi"
 
@@ -59,6 +60,7 @@ End Type
 Type LibZmqSocket Extends LibZMQWrapper
 public:
     Declare Function Socket(Byval s As Any Ptr, Byval stype As Long) As Any Ptr
+    Declare Function SocketMonitor(Byval socket_ As Any Ptr, Byval addr As ZString Ptr, Byval events As Long) As Long
     Declare Function Bind(Byval socket_ As Any Ptr, Byval addr As ZString Ptr) As Long
     Declare Function UnBind(Byval socket_ As Any Ptr, Byval addr As ZString Ptr) As Long
     Declare Function Recv(Byval socket_ As Any Ptr, Byval buf As Any Ptr, Byval buflen As UInteger, Byval flags As Long) As Long
@@ -67,7 +69,10 @@ public:
     Declare Function Connect(Byval socket_ As Any Ptr, Byval addr As ZString Ptr) As Long
     Declare Function DisConnect(Byval socket_ As Any Ptr, Byval addr As ZString Ptr) As Long
     Declare Function Setsockopt(Byval socket_ As Any Ptr, Byval options As Long, Byval optval As Any Ptr, Byval optvallen As UInteger) As Long
+    Declare Function SetsockoptInt(Byval socket_ As Any Ptr, Byval options As Long, Byval optval As Long) As Long
     Declare Function Getsockopt(Byval socket_ As Any Ptr, Byval options As Long, Byref optval As String, Byval optvallen As UInteger) As Long
+    Declare Function GetsockoptPtr(Byval socket_ As Any Ptr, Byval options As Long, Byval optval As Any Ptr, Byref optvallen As UInteger) As Long
+    Declare Function GetsockoptInt(Byval socket_ As Any Ptr, Byval options As Long, Byref optval As Long) As Long
     Declare Function Close(Byval socket_ As Any Ptr) As Long
 End Type
 
@@ -93,6 +98,13 @@ End Type
 Type LibZmqPoll Extends LibZMQWrapper
 public:
     Declare Function Poll(Byval items As ZmqPollItemT Ptr, Byval nitems As Long, Byval timeout As Clong) As Long
+End Type
+
+' Declare Type LibZmqProxy
+Type LibZmqProxy Extends LibZMQWrapper
+public:
+    Declare Function Proxy(Byval frontend As Any Ptr, Byval backend As Any Ptr, Byval capture As Any Ptr) As Long
+    Declare Function Steerable(Byval frontend As Any Ptr, Byval backend As Any Ptr, Byval capture As Any Ptr, Byval control As Any Ptr) As Long
 End Type
 
 ' Declare Type LibZmqSecurity
@@ -285,6 +297,17 @@ End Function
 Function LibZmqSocket.Socket(Byval s As Any Ptr, Byval stype As Long) As Any Ptr
     Function = ZmqSocket(LibZMQWrapper.DllInstance(), s, stype)
 End Function
+
+' <summary>
+' SocketMonitor
+' </summary>
+' <param name="socket_">Ptr</param>
+' <param name="addr">ZString Ptr</param>
+' <param name="events">Long</param>
+' <returns>Returns long.</returns>
+Function LibZmqSocket.SocketMonitor(Byval socket_ As Any Ptr, Byval addr As ZString Ptr, Byval events As Long) As Long
+    Function = ZmqSocketMonitor(LibZMQWrapper.DllInstance(), socket_, addr, events)
+End Function
   
 ' <summary>
 ' Bind
@@ -375,6 +398,17 @@ Function LibZmqSocket.Setsockopt(Byval socket_ As Any Ptr, Byval options As Long
 End Function
 
 ' <summary>
+' SetsockoptInt
+' </summary>
+' <param name="socket_">Ptr</param>
+' <param name="options">Long</param>
+' <param name="optval">Long</param>
+' <returns>Returns long.</returns>
+Function LibZmqSocket.SetsockoptInt(Byval socket_ As Any Ptr, Byval options As Long, Byval optval As Long) As Long
+    Function = ZmqSetsockoptInt(LibZMQWrapper.DllInstance(), socket_, options, optval)
+End Function
+
+' <summary>
 ' Getsockopt
 ' </summary>
 ' <param name="socket_">Ptr</param>
@@ -384,6 +418,29 @@ End Function
 ' <returns>Returns long.</returns>
 Function LibZmqSocket.Getsockopt(Byval socket_ As Any Ptr, Byval options As Long, Byref optval As String, Byval optvallen As UInteger) As Long
     Function = ZmqGetsockopt(LibZMQWrapper.DllInstance(), socket_, options, optval, optvallen)
+End Function
+
+' <summary>
+' GetsockoptPtr
+' </summary>
+' <param name="socket_">Ptr</param>
+' <param name="options">Long</param>
+' <param name="optval">Ptr</param>
+' <param name="optvallen">UInteger</param>
+' <returns>Returns long.</returns>
+Function LibZmqSocket.GetsockoptPtr(Byval socket_ As Any Ptr, Byval options As Long, Byval optval As Any Ptr, Byref optvallen As UInteger) As Long
+    Function = ZmqGetsockoptPtr(LibZMQWrapper.DllInstance(), socket_, options, optval, optvallen)
+End Function
+
+' <summary>
+' GetsockoptInt
+' </summary>
+' <param name="socket_">Ptr</param>
+' <param name="options">Long</param>
+' <param name="optval">Long</param>
+' <returns>Returns long.</returns>
+Function LibZmqSocket.GetsockoptInt(Byval socket_ As Any Ptr, Byval options As Long, Byref optval As Long) As Long
+    Function = ZmqGetsockoptInt(LibZMQWrapper.DllInstance(), socket_, options, optval)
 End Function
 
 ' <summary>
@@ -549,6 +606,31 @@ End Function
 ' <returns>Returns long.</returns>
 Function LibZmqPoll.Poll(Byval items As ZmqPollItemT Ptr, Byval nitems As Long, Byval timeout As Clong) As Long
     Function = ZmqPoll(LibZMQWrapper.DllInstance(), items, nitems, timeout)
+End Function
+
+' Type LibZmqProxy
+
+' <summary>
+' Proxy
+' </summary>
+' <param name="frontend">Ptr</param>
+' <param name="backend">Ptr</param>
+' <param name="capture">Ptr</param>
+' <returns>Returns long.</returns>
+Function LibZmqProxy.Proxy(Byval frontend As Any Ptr, Byval backend As Any Ptr, Byval capture As Any Ptr) As Long
+    Function = ZmqProxy(LibZMQWrapper.DllInstance(), frontend, backend, capture)
+End Function
+
+' <summary>
+' Steerable
+' </summary>
+' <param name="frontend">Ptr</param>
+' <param name="backend">Ptr</param>
+' <param name="capture">Ptr</param>
+' <param name="control">Ptr</param>
+' <returns>Returns long.</returns>
+Function LibZmqProxy.Steerable(Byval frontend As Any Ptr, Byval backend As Any Ptr, Byval capture As Any Ptr, Byval control As Any Ptr) As Long
+    Function = ZmqProxySteerable(LibZMQWrapper.DllInstance(), frontend, backend, capture, control)
 End Function
 
 ' Type LibZmqSecurity

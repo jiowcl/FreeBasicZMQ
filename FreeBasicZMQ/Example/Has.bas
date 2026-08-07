@@ -34,6 +34,16 @@ If hLibrary > 0 Then
     Print("Has curve: " & ZmqHas(hLibrary, "curve"))
     Print("Has draft: " & ZmqHas(hLibrary, "draft"))
 
+    Dim Context As Any Ptr = ZmqCtxNew(hLibrary)
+    Dim Socket As Any Ptr = ZmqSocket(hLibrary, Context, ZMQ_REP)
+    Dim SocketType As Long = 0
+
+    ZmqSetsockoptInt(hLibrary, Socket, ZMQ_LINGER, 0)
+    ZmqGetsockoptInt(hLibrary, Socket, ZMQ_TYPE, SocketType)
+    Print("Socket Type: " & SocketType)
+
+    ZmqClose(hLibrary, Socket)
+    ZmqCtxShutdown(hLibrary, Context)
     ZmqDllClose(hLibrary)
 End If
 

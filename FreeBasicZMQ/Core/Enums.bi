@@ -149,6 +149,24 @@ Const ZMQ_GSSAPI As Long = 3
 Const ZMQ_CURVE_KEYSIZE     As Long = 32
 Const ZMQ_CURVE_KEYSIZE_Z85 As Long = 40
 
+' Socket Transport Events (TCP, IPC and TIPC only)
+Const ZMQ_EVENT_CONNECTED                 As Long = &h0001
+Const ZMQ_EVENT_CONNECT_DELAYED           As Long = &h0002
+Const ZMQ_EVENT_CONNECT_RETRIED           As Long = &h0004
+Const ZMQ_EVENT_LISTENING                 As Long = &h0008
+Const ZMQ_EVENT_BIND_FAILED               As Long = &h0010
+Const ZMQ_EVENT_ACCEPTED                  As Long = &h0020
+Const ZMQ_EVENT_ACCEPT_FAILED             As Long = &h0040
+Const ZMQ_EVENT_CLOSED                    As Long = &h0080
+Const ZMQ_EVENT_CLOSE_FAILED              As Long = &h0100
+Const ZMQ_EVENT_DISCONNECTED              As Long = &h0200
+Const ZMQ_EVENT_MONITOR_STOPPED           As Long = &h0400
+Const ZMQ_EVENT_ALL                       As Long = &hFFFF
+Const ZMQ_EVENT_HANDSHAKE_FAILED_NO_DETAIL As Long = &h0800
+Const ZMQ_EVENT_HANDSHAKE_SUCCEEDED       As Long = &h1000
+Const ZMQ_EVENT_HANDSHAKE_FAILED_PROTOCOL As Long = &h2000
+Const ZMQ_EVENT_HANDSHAKE_FAILED_AUTH     As Long = &h4000
+
 ' Errors
 Const ZMQ_HAUSNUMERO  As Long = 156384712
 Const ENOTSUP         As Long = ZMQ_HAUSNUMERO + 1
