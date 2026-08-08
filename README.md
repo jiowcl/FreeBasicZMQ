@@ -29,8 +29,6 @@ fbc PubServer.bas -target win64
 
 Dim lpszLibZmqDll As String = "libzmq.dll"
 
-' Rnd with Range
-' Source Code from: https://documentation.help/FreeBASIC/KeyPgRnd.html
 Function RndRange(Byval first As Double, Byval last As Double) As Double
     Function = Rnd * (last - first) + first
 End Function
@@ -39,56 +37,40 @@ Const lpszServerAddr As String = "tcp://*:1689"
 
 Dim ZmqContextRec As LibZmqContext
 Dim ZmqSocketRec As LibZmqSocket
-Dim ZmqHelperRec As LibZmqHelper
+Dim ZmqRuntimeRec As LibZmqRuntime
 
 If LibZMQWrapper.DllOpen(lpszLibZmqDll) Then
     Dim Context As Any Ptr = ZmqContextRec.NewCtx()
     Dim Socket As Any Ptr = ZmqSocketRec.Socket(Context, ZMQ_PUB)
     Dim Rc As Long = ZmqSocketRec.Bind(Socket, lpszServerAddr)
 
-    Print("Bind an IP address: " & lpszServerAddr)
+    If Rc <> 0 Then
+        Print("Bind failed: " & *ZmqRuntimeRec.Strerror(ZmqRuntimeRec.Errno()))
+    Else
+        Print("Bind an IP address: " & lpszServerAddr)
 
-    Randomize
-    
-    While 1
-        Dim lpszRecvBufferPtr As Any Ptr = CAllocate(32)
-        Dim lpszSendBufferPtr As ZString Ptr
-        Dim lpszTopicBufferPtr As ZString Ptr
-        Dim lpszTopic As String = "quotes"
-        Dim lpszSendMessage As String = "Bid: " & Str(RndRange(9000, 1000)) & ",Ask:" + Str(RndRange(9000, 1000))
+        ' Allow subscribers time to connect (slow joiner).
+        Sleep(200)
+        Randomize
 
-        ZmqSocketRec.Recv(Socket, lpszRecvBufferPtr, 32, 0)
-        
-        Sleep(2)
-        
-        Dim lpszReturnMessage As String = *CPtr(Zstring Ptr, lpszRecvBufferPtr)
-        
-        If lpszReturnMessage <> "" Then
-            Print("Received: ")
-            Print(lpszReturnMessage)
-        End If
+        While 1
+            Dim lpszTopic As String = "quotes"
+            Dim lpszSendMessage As String = "Bid:" & Str(CInt(RndRange(1000, 9000))) & ",Ask:" & Str(CInt(RndRange(1000, 9000)))
 
-        lpszTopicBufferPtr = CAllocate(Len(lpszTopic), SizeOfDefZStringPtr(lpszTopicBufferPtr))
-        *lpszTopicBufferPtr = lpszTopic
-        
-        lpszSendBufferPtr = CAllocate(Len(lpszSendMessage), SizeOfDefZStringPtr(lpszSendBufferPtr))
-        *lpszSendBufferPtr = lpszSendMessage
+            If ZmqSocketRec.Send(Socket, StrPtr(lpszTopic), Len(lpszTopic), ZMQ_SNDMORE) = -1 Then
+                Print("Send topic failed: " & *ZmqRuntimeRec.Strerror(ZmqRuntimeRec.Errno()))
+            ElseIf ZmqSocketRec.Send(Socket, StrPtr(lpszSendMessage), Len(lpszSendMessage), 0) = -1 Then
+                Print("Send message failed: " & *ZmqRuntimeRec.Strerror(ZmqRuntimeRec.Errno()))
+            Else
+                Print("Published: " & lpszSendMessage)
+            End If
 
-        ZmqSocketRec.Send(Socket, lpszTopicBufferPtr, Len(lpszTopic), ZMQ_SNDMORE)
-        ZmqSocketRec.Send(Socket, lpszSendBufferPtr, Len(lpszSendMessage), 0)
+            Sleep(100)
+        Wend
+    End If
 
-        Deallocate(lpszRecvBufferPtr) 
-        Deallocate(lpszSendBufferPtr) 
-        Deallocate(lpszTopicBufferPtr) 
-
-        lpszRecvBufferPtr = 0
-        lpszSendBufferPtr = 0
-        lpszTopicBufferPtr = 0
-    Wend
-    
     ZmqSocketRec.Close(Socket)
     ZmqContextRec.Shutdown(Context)
-    
     LibZMQWrapper.DllClose()
 End If
 ```
@@ -103,53 +85,52 @@ fbc SubClient.bas -target win64
 #Include "../../Core/Enums.bi"
 #Include "../../Core/ZeroMQWrapper.bi"
 
-Dim lpszCurrentDir As String = Curdir()
 Dim lpszLibZmqDll As String = "libzmq.dll"
-
 Const lpszServerAddr As String = "tcp://localhost:1689"
 
 Dim ZmqContextRec As LibZmqContext
 Dim ZmqSocketRec As LibZmqSocket
-Dim ZmqHelperRec As LibZmqHelper
+Dim ZmqRuntimeRec As LibZmqRuntime
 
 If LibZMQWrapper.DllOpen(lpszLibZmqDll) Then
     Dim Context As Any Ptr = ZmqContextRec.NewCtx()
     Dim Socket As Any Ptr = ZmqSocketRec.Socket(Context, ZMQ_SUB)
-    Dim Rc As Long = ZmqSocketRec.Connect(Socket, lpszServerAddr)
-    
-    Dim lpszSubscribePtr As ZString Ptr
     Dim lpszSubscribe As String = "quotes"
+    Dim Rc As Long
 
-    lpszSubscribePtr = CAllocate(Len(lpszSubscribe), SizeOfDefZStringPtr(lpszSubscribePtr))
-    *lpszSubscribePtr = lpszSubscribe
+    ' Subscribe before connect to reduce missed early messages.
+    ZmqSocketRec.Setsockopt(Socket, ZMQ_SUBSCRIBE, StrPtr(lpszSubscribe), Len(lpszSubscribe))
+    Rc = ZmqSocketRec.Connect(Socket, lpszServerAddr)
 
-    ZmqSocketRec.Setsockopt(Socket, ZMQ_SUBSCRIBE, lpszSubscribePtr, Len(lpszSubscribe))
-    
-    While 1
-        Dim lpszTopicBufferPtr As Any Ptr = CAllocate(32)
-        Dim lpszRecvBufferPtr As Any Ptr = CAllocate(64)
+    If Rc <> 0 Then
+        Print("Connect failed: " & *ZmqRuntimeRec.Strerror(ZmqRuntimeRec.Errno()))
+    Else
+        Print("Connected: " & lpszServerAddr & " (subscribe=" & lpszSubscribe & ")")
 
-        ZmqSocketRec.Recv(Socket, lpszTopicBufferPtr, 32, 0)
-        ZmqSocketRec.Recv(Socket, lpszRecvBufferPtr, 64, 0)
+        While 1
+            Dim lpszTopicBuffer As ZString * 256
+            Dim lpszRecvBuffer As ZString * 256
+            Dim TopicBytes As Long
+            Dim MessageBytes As Long
 
-        Print(*CPtr(Zstring Ptr, lpszRecvBufferPtr))
-        
-        Deallocate(lpszTopicBufferPtr)
-        Deallocate(lpszRecvBufferPtr)
+            TopicBytes = ZmqSocketRec.Recv(Socket, @lpszTopicBuffer, SizeOf(lpszTopicBuffer), 0)
 
-        lpszTopicBufferPtr = 0
-        lpszRecvBufferPtr = 0
-        
-        Sleep(2)
-    Wend
+            If TopicBytes = -1 Then
+                Print("Recv topic failed: " & *ZmqRuntimeRec.Strerror(ZmqRuntimeRec.Errno()))
+            Else
+                MessageBytes = ZmqSocketRec.Recv(Socket, @lpszRecvBuffer, SizeOf(lpszRecvBuffer), 0)
 
-    Deallocate(lpszSubscribePtr)
+                If MessageBytes = -1 Then
+                    Print("Recv message failed: " & *ZmqRuntimeRec.Strerror(ZmqRuntimeRec.Errno()))
+                Else
+                    Print(Left(lpszRecvBuffer, MessageBytes))
+                End If
+            End If
+        Wend
+    End If
 
-    lpszSubscribePtr = 0
-    
     ZmqSocketRec.Close(Socket)
     ZmqContextRec.Shutdown(Context)
-    
     LibZMQWrapper.DllClose()
 End If
 ```

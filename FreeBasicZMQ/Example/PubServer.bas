@@ -26,7 +26,7 @@ Function RndRange(Byval first As Double, Byval last As Double) As Double
     Function = Rnd * (last - first) + first
 End Function
 
-Const lpszServerAddr As String = "tcp://*:1700"
+Const lpszServerAddr As String = "tcp://*:1689"
 
 Dim hLibrary As Any Ptr = ZmqDllOpen(lpszLibZmqDll)
 
@@ -34,49 +34,33 @@ If hLibrary > 0 Then
     Dim Context As Any Ptr = ZmqCtxNew(hLibrary)
     Dim Socket As Any Ptr = ZmqSocket(hLibrary, Context, ZMQ_PUB)
     Dim Rc As Long = ZmqBind(hLibrary, Socket, lpszServerAddr)
-    
-    Print("Bind an IP address: " & lpszServerAddr)
 
-    Randomize
-    
-    While 1
-        Dim lpszRecvBufferPtr As Any Ptr = CAllocate(32)
-        Dim lpszSendBufferPtr As ZString Ptr
-        Dim lpszTopicBufferPtr As ZString Ptr
-        Dim lpszTopic As String = "quotes"
-        Dim lpszSendMessage As String = "Bid: " & Str(RndRange(9000, 1000)) & ",Ask:" + Str(RndRange(9000, 1000))
+    If Rc <> 0 Then
+        Print("Bind failed: " & *ZmqStrerror(hLibrary, ZmqErrno(hLibrary)))
+    Else
+        Print("Bind an IP address: " & lpszServerAddr)
 
-        ZmqRecv(hLibrary, Socket, lpszRecvBufferPtr, 32, 0)
-        
-        Sleep(2)
-        
-        Dim lpszReturnMessage As String = *CPtr(ZString Ptr, lpszRecvBufferPtr)
-        
-        If lpszReturnMessage <> "" Then
-            Print("Received: ")
-            Print(lpszReturnMessage)
-        End If
+        ' Allow subscribers time to connect (slow joiner).
+        Sleep(200)
+        Randomize
 
-        lpszTopicBufferPtr = CAllocate(Len(lpszTopic), SizeOfDefZStringPtr(lpszTopicBufferPtr))
-        *lpszTopicBufferPtr = lpszTopic
-        
-        lpszSendBufferPtr = CAllocate(Len(lpszSendMessage), SizeOfDefZStringPtr(lpszSendBufferPtr))
-        *lpszSendBufferPtr = lpszSendMessage
+        While 1
+            Dim lpszTopic As String = "quotes"
+            Dim lpszSendMessage As String = "Bid:" & Str(CInt(RndRange(1000, 9000))) & ",Ask:" & Str(CInt(RndRange(1000, 9000)))
 
-        ZmqSend(hLibrary, Socket, lpszTopicBufferPtr, Len(lpszTopic), ZMQ_SNDMORE)
-        ZmqSend(hLibrary, Socket, lpszSendBufferPtr, Len(lpszSendMessage), 0)
+            If ZmqSend(hLibrary, Socket, StrPtr(lpszTopic), Len(lpszTopic), ZMQ_SNDMORE) = -1 Then
+                Print("Send topic failed: " & *ZmqStrerror(hLibrary, ZmqErrno(hLibrary)))
+            ElseIf ZmqSend(hLibrary, Socket, StrPtr(lpszSendMessage), Len(lpszSendMessage), 0) = -1 Then
+                Print("Send message failed: " & *ZmqStrerror(hLibrary, ZmqErrno(hLibrary)))
+            Else
+                Print("Published: " & lpszSendMessage)
+            End If
 
-        Deallocate(lpszRecvBufferPtr) 
-        Deallocate(lpszSendBufferPtr) 
-        Deallocate(lpszTopicBufferPtr) 
+            Sleep(100)
+        Wend
+    End If
 
-        lpszRecvBufferPtr = 0
-        lpszSendBufferPtr = 0
-        lpszTopicBufferPtr = 0
-    Wend
-    
     ZmqClose(hLibrary, Socket)
     ZmqCtxShutdown(hLibrary, Context)
-    
     ZmqDllClose(hLibrary)
 End If

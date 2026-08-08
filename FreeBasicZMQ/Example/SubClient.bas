@@ -20,48 +20,49 @@ Dim lpszCurrentDir As String = Curdir()
     Chdir(lpszCurrentDir & lpszLibZmqDir)
 #endif
 
-Const lpszServerAddr As String = "tcp://localhost:1700"
+Const lpszServerAddr As String = "tcp://localhost:1689"
 
 Dim hLibrary As Any Ptr = ZmqDllOpen(lpszLibZmqDll)
 
 If hLibrary > 0 Then
     Dim Context As Any Ptr = ZmqCtxNew(hLibrary)
     Dim Socket As Any Ptr = ZmqSocket(hLibrary, Context, ZMQ_SUB)
-    Dim Rc As Long = ZmqConnect(hLibrary, Socket, lpszServerAddr)
-    
-    Dim lpszSubscribePtr As ZString Ptr
     Dim lpszSubscribe As String = "quotes"
+    Dim Rc As Long
 
-    lpszSubscribePtr = CAllocate(Len(lpszSubscribe), SizeOfDefZStringPtr(lpszSubscribePtr))
-    *lpszSubscribePtr = lpszSubscribe
+    ' Subscribe before connect to reduce missed early messages.
+    ZmqSetsockopt(hLibrary, Socket, ZMQ_SUBSCRIBE, StrPtr(lpszSubscribe), Len(lpszSubscribe))
+    Rc = ZmqConnect(hLibrary, Socket, lpszServerAddr)
 
-    ZmqSetsockopt(hLibrary, Socket, ZMQ_SUBSCRIBE, lpszSubscribePtr, Len(lpszSubscribe))
-    
-    While 1
-        Dim lpszTopicBufferPtr As Any Ptr = CAllocate(32)
-        Dim lpszRecvBufferPtr As Any Ptr = CAllocate(64)
+    If Rc <> 0 Then
+        Print("Connect failed: " & *ZmqStrerror(hLibrary, ZmqErrno(hLibrary)))
+    Else
+        Print("Connected: " & lpszServerAddr & " (subscribe=" & lpszSubscribe & ")")
 
-        ZmqRecv(hLibrary, Socket, lpszTopicBufferPtr, 32, 0)
-        ZmqRecv(hLibrary, Socket, lpszRecvBufferPtr, 64, 0)
+        While 1
+            Dim lpszTopicBuffer As ZString * 256
+            Dim lpszRecvBuffer As ZString * 256
+            Dim TopicBytes As Long
+            Dim MessageBytes As Long
 
-        Print(*CPtr(ZString Ptr, lpszRecvBufferPtr))
-        
-        Deallocate(lpszTopicBufferPtr)
-        Deallocate(lpszRecvBufferPtr)
+            TopicBytes = ZmqRecv(hLibrary, Socket, @lpszTopicBuffer, SizeOf(lpszTopicBuffer), 0)
 
-        lpszTopicBufferPtr = 0
-        lpszRecvBufferPtr = 0
-        
-        Sleep(2)
-    Wend
+            If TopicBytes = -1 Then
+                Print("Recv topic failed: " & *ZmqStrerror(hLibrary, ZmqErrno(hLibrary)))
+            Else
+                MessageBytes = ZmqRecv(hLibrary, Socket, @lpszRecvBuffer, SizeOf(lpszRecvBuffer), 0)
 
-    Deallocate(lpszSubscribePtr)
+                If MessageBytes = -1 Then
+                    Print("Recv message failed: " & *ZmqStrerror(hLibrary, ZmqErrno(hLibrary)))
+                Else
+                    Print(Left(lpszRecvBuffer, MessageBytes))
+                End If
+            End If
+        Wend
+    End If
 
-    lpszSubscribePtr = 0
-    
     ZmqClose(hLibrary, Socket)
     ZmqCtxShutdown(hLibrary, Context)
-       
     ZmqDllClose(hLibrary)
 End If
 
