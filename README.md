@@ -181,8 +181,7 @@ Code released under the MIT license.
 
 ## TODO
 
-- Optional: atomic counters / timers  
-- Optional: draft APIs (gated)  
+- Atomic counters / timers  
 
 ## Donation
 
