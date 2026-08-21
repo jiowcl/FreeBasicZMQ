@@ -14,109 +14,52 @@ Declare Function ZmqCtxGet(Byval dllInstance As Any Ptr, Byval context As Any Pt
 
 ' Zmq Function Declare
 
-' <summary>
-' ZmqCtxNew
-' </summary>
-' <param name="dllInstance">Ptr</param>
-' <returns>Returns any ptr.</returns>
 Function ZmqCtxNew(Byval dllInstance As Any Ptr) As Any Ptr
     Dim lResult As Any Ptr
-    Dim pFuncCall As Function() As Any Ptr
 
-    If (dllInstance > 0) Then
-        pFuncCall = DyLibSymbol(dllInstance, "zmq_ctx_new")
-
-        If (pFuncCall > 0) Then
-            lResult = pFuncCall()
-        End If
+    If ZmqApiEnsure(dllInstance) And (g_ZmqApi.CtxNew > 0) Then
+        lResult = g_ZmqApi.CtxNew()
     End If
-  
+
     Function = lResult
 End Function
 
-' <summary>
-' ZmqCtxTerm
-' </summary>
-' <param name="dllInstance">Ptr</param>
-' <param name="context">Ptr</param>
-' <returns>Returns long.</returns>
 Function ZmqCtxTerm(Byval dllInstance As Any Ptr, Byval context As Any Ptr) As Long
     Dim lResult As Long
-    Dim pFuncCall As Function(Byval context As Any Ptr) As Long
-  
-    If (dllInstance > 0) Then
-        pFuncCall = DyLibSymbol(dllInstance, "zmq_ctx_term")
 
-        If (pFuncCall > 0) Then
-            lResult = pFuncCall(context)
-        End If
+    If ZmqApiEnsure(dllInstance) And (g_ZmqApi.CtxTerm > 0) Then
+        lResult = g_ZmqApi.CtxTerm(context)
     End If
-  
+
     Function = lResult
 End Function
 
-' <summary>
-' ZmqCtxShutdown
-' </summary>
-' <param name="dllInstance">Ptr</param>
-' <param name="context">Ptr</param>
-' <returns>Returns long.</returns>
 Function ZmqCtxShutdown(Byval dllInstance As Any Ptr, Byval context As Any Ptr) As Long
     Dim lResult As Long
-    Dim pFuncCall As Function(Byval context As Any Ptr) As Long
-  
-    If (dllInstance > 0) Then
-        pFuncCall = DyLibSymbol(dllInstance, "zmq_ctx_shutdown")
 
-        If (pFuncCall > 0) Then
-            lResult = pFuncCall(context)
-        End If
+    If ZmqApiEnsure(dllInstance) And (g_ZmqApi.CtxShutdown > 0) Then
+        lResult = g_ZmqApi.CtxShutdown(context)
     End If
-    
+
     Function = lResult
 End Function
 
-' <summary>
-' ZmqCtxSet
-' </summary>
-' <param name="dllInstance">Ptr</param>
-' <param name="context">Ptr</param>
-' <param name="options">Long</param>
-' <param name="optval">Long</param>
-' <returns>Returns long.</returns>
 Function ZmqCtxSet(Byval dllInstance As Any Ptr, Byval context As Any Ptr, Byval options As Long, Byval optval As Long) As Long
     Dim lResult As Long
-    Dim pFuncCall As Function(Byval context As Any Ptr, Byval options As Long, Byval optval As Long) As Long
-    
-    If (dllInstance > 0) Then
-        pFuncCall = DyLibSymbol(dllInstance, "zmq_ctx_set")
 
-        If (pFuncCall > 0) Then
-            lResult = pFuncCall(context, options, optval)
-        End If
+    If ZmqApiEnsure(dllInstance) And (g_ZmqApi.CtxSet > 0) Then
+        lResult = g_ZmqApi.CtxSet(context, options, optval)
     End If
-    
+
     Function = lResult
 End Function
 
-' <summary>
-' ZmqCtxGet
-' </summary>
-' <param name="dllInstance">Ptr</param>
-' <param name="context">Ptr</param>
-' <param name="options">Long</param>
-' <returns>Returns long.</returns>
 Function ZmqCtxGet(Byval dllInstance As Any Ptr, Byval context As Any Ptr, Byval options As Long) As Long
     Dim lResult As Long
-    Dim pFuncCall As Function(Byval context As Any Ptr, Byval options As Long) As Long
-    
-    If (dllInstance > 0) Then
-        pFuncCall = DyLibSymbol(dllInstance, "zmq_ctx_get")
 
-        If (pFuncCall > 0) Then
-            lResult = pFuncCall(context, options)
-        End If
+    If ZmqApiEnsure(dllInstance) And (g_ZmqApi.CtxGet > 0) Then
+        lResult = g_ZmqApi.CtxGet(context, options)
     End If
-    
+
     Function = lResult
 End Function

@@ -16,9 +16,15 @@ Declare Function SizeOfDefWStringPtr(Byval varToPtr As WString Ptr) As Integer
 ' ZmqDllOpen
 ' </summary>
 ' <param name="lpszDllPath">String</param>
-' <returns>Returns any pty.</returns>
+' <returns>Returns any ptr.</returns>
 Function ZmqDllOpen(Byval lpszDllPath As String) As Any Ptr
-    Function = DyLibLoad(lpszDllPath)
+    Dim hLibrary As Any Ptr = DyLibLoad(lpszDllPath)
+
+    If (hLibrary > 0) Then
+        ZmqApiBind(hLibrary)
+    End If
+
+    Function = hLibrary
 End Function
 
 ' <summary>
@@ -28,6 +34,10 @@ End Function
 ' <returns>Returns boolean.</returns>
 Function ZmqDllClose(Byval dllInstance As Any Ptr) As Boolean
     If (dllInstance > 0) Then
+        If (g_ZmqApi.dllInstance = dllInstance) Then
+            ZmqApiClear()
+        End If
+
         DyLibFree(dllInstance)
     End If
   

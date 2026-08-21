@@ -10,11 +10,18 @@ ZMQ Wrapper for FreeBasic Programming Language.
 
 - Windows 7 above (recommend)  
 - FreeBasic 1.10.1 above (recommend)  
-- [ZeroMQ](https://github.com/zeromq)  
+- [ZeroMQ](https://github.com/zeromq) / libzmq **4.3.6** (binding targets this API)
+
+## Library Notes  
+
+- Run examples with the working directory set so `Library/x64` or `Library/x86` (and `libsodium.dll` if present) can be loaded.
+- Probe runtime features with `zmq_has` (for example `"curve"`, `"ipc"`, `"draft"`).
+- The bundled Windows `libzmq.dll` may report **`zmq_has("curve") = 0`**. CURVE helpers (`zmq_curve_keypair` / `zmq_curve_public`) are bound, but you need a CURVE-enabled libzmq build (typically linked with libsodium) for those APIs to succeed.
+- DLL symbols are resolved once on open via an internal API table (`Symbols.bi`), not on every call.
 
 ## How to Build
 
-Building requires FreeBasic Compiler and test under Windows 10.  
+Building requires FreeBasic Compiler and test under Windows 11.  
 
 ## Example
 

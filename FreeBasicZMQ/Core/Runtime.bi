@@ -16,80 +16,46 @@ Declare Function ZmqHas(Byval dllInstance As Any Ptr, Byval capability As Const 
 ' <summary>
 ' ZmqErrno
 ' </summary>
-' <param name="dllInstance">Ptr</param>
-' <returns>Returns integer.</returns>
 Function ZmqErrno(Byval dllInstance As Any Ptr) As Long
     Dim lResult As Long
-    Dim pFuncCall As Function() As Long
-  
-    If (dllInstance > 0) Then
-        pFuncCall = DyLibSymbol(dllInstance, "zmq_errno")
 
-        If (pFuncCall > 0) Then
-            lResult = pFuncCall()
-        End If
+    If ZmqApiEnsure(dllInstance) And (g_ZmqApi.Errno > 0) Then
+        lResult = g_ZmqApi.Errno()
     End If
-  
+
     Function = lResult
 End Function
 
 ' <summary>
 ' ZmqStrerror
 ' </summary>
-' <param name="dllInstance">Ptr</param>
-' <param name="errnum_">Integer</param>
-' <returns>Returns zstring ptr.</returns>
 Function ZmqStrerror(Byval dllInstance As Any Ptr, Byval errnum_ As Integer) As Const ZString Ptr
     Dim lResult As Const ZString Ptr
-    Dim pFuncCall As Function(Byval errnum_ As Integer) As ZString Ptr
-  
-    If (dllInstance > 0) Then
-        pFuncCall = DyLibSymbol(dllInstance, "zmq_strerror")
 
-        If (pFuncCall > 0) Then
-            lResult = pFuncCall(errnum_)
-        End If
+    If ZmqApiEnsure(dllInstance) And (g_ZmqApi.Strerror > 0) Then
+        lResult = g_ZmqApi.Strerror(errnum_)
     End If
-  
+
     Function = lResult
 End Function
 
 ' <summary>
 ' ZmqVersion
 ' </summary>
-' <param name="dllInstance">Ptr</param>
-' <param name="major">Long</param>
-' <param name="minor">Long</param>
-' <param name="patch">Long</param>
-' <returns>Returns void.</returns>
 Sub ZmqVersion(Byval dllInstance As Any Ptr, Byref major As Long, Byref minor As Long, Byref patch As Long)
-    Dim pFuncCall As Sub(Byref major As Long, Byref minor As Long, Byref patch As Long)
-  
-    If (dllInstance > 0) Then
-        pFuncCall = DyLibSymbol(dllInstance, "zmq_version")
-        
-        If (pFuncCall > 0) Then
-            pFuncCall(major, minor, patch)
-        End If
+    If ZmqApiEnsure(dllInstance) And (g_ZmqApi.Version > 0) Then
+        g_ZmqApi.Version(major, minor, patch)
     End If
 End Sub
 
 ' <summary>
 ' ZmqHas
 ' </summary>
-' <param name="dllInstance">Ptr</param>
-' <param name="capability">Const ZString Ptr</param>
-' <returns>Returns long.</returns>
 Function ZmqHas(Byval dllInstance As Any Ptr, Byval capability As Const ZString Ptr) As Long
     Dim lResult As Long
-    Dim pFuncCall As Function(Byval capability As Const ZString Ptr) As Long
 
-    If (dllInstance > 0) Then
-        pFuncCall = DyLibSymbol(dllInstance, "zmq_has")
-
-        If (pFuncCall > 0) Then
-            lResult = pFuncCall(capability)
-        End If
+    If ZmqApiEnsure(dllInstance) And (g_ZmqApi.Has > 0) Then
+        lResult = g_ZmqApi.Has(capability)
     End If
 
     Function = lResult

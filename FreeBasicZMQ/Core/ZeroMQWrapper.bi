@@ -6,8 +6,9 @@
 #Include Once "crt/long.bi"
 #Include Once "crt/longdouble.bi"
 
-#Include Once "LibDll.bi"
 #Include Once "Enums.bi"
+#Include Once "Symbols.bi"
+#Include Once "LibDll.bi"
 #Include Once "Runtime.bi"
 #Include Once "Context.bi"
 #Include Once "Socket.bi"
@@ -179,12 +180,20 @@ Static Function LibZMQWrapper.Instance(Byval opt As Integer, Byval lpszDllPath A
 
             If (LibDllInstancePtr = 0) Then
                 LibDllInstancePtr = DyLibLoad(lpszDllPath)
+
+                If (LibDllInstancePtr > 0) Then
+                    ZmqApiBind(LibDllInstancePtr)
+                End If
             End If
         End If
     End If
 
     If (Opt = LIB_WRAPPER.OPT_DLLCLOSE) Then
         If (LibDllInstancePtr > 0) Then
+            If (g_ZmqApi.dllInstance = LibDllInstancePtr) Then
+                ZmqApiClear()
+            End If
+
             DyLibFree(LibDllInstancePtr)
 
             LibDllPath = ""

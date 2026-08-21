@@ -6,8 +6,9 @@
 #Include Once "crt/long.bi"
 #Include Once "crt/longdouble.bi"
 
-#Include Once "LibDll.bi"
 #Include Once "Enums.bi"
+#Include Once "Symbols.bi"
+#Include Once "LibDll.bi"
 #Include Once "Runtime.bi"
 #Include Once "Context.bi"
 #Include Once "Socket.bi"
