@@ -46,7 +46,7 @@ hLibrary = ZmqDllOpen(lpszLibZmqDll)
 If hLibrary > 0 Then
     If ZmqHas(hLibrary, "curve") = 0 Then
         Print("libzmq was built without CURVE support (zmq_has(""curve"") = 0).")
-        Print("Replace Library/*/libzmq.dll with a CURVE-enabled build (libsodium) to run this demo.")
+        Print("Use a CURVE-enabled libzmq.dll for this demo.")
     Else
         Dim lpszServerPublic As ZString * (ZMQ_CURVE_KEYSIZE_Z85 + 1)
         Dim lpszServerSecret As ZString * (ZMQ_CURVE_KEYSIZE_Z85 + 1)

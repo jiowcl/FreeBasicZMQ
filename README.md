@@ -44,7 +44,7 @@ Run `Example/Has.bas` (or `Example/Module/Has.bas`) after loading the DLL:
 | `draft` | Draft API build |
 | `pgm` / `norm` / `tipc` / … | Optional transports (if compiled in) |
 
-The bundled Windows `libzmq.dll` may report **`curve=0`**. CURVE helpers are still bound; use a CURVE-enabled libzmq (typically linked with libsodium) for `Curve` / `CurveKeypair` demos to succeed. DLL symbols are resolved once on open (`Core/Symbols.bi`).
+The bundled Windows `libzmq.dll` is CURVE-enabled and should report **`curve=1`**. The `Curve` / `CurveKeypair` demos use the bundled CURVE support; `zmq_has("curve")` remains a runtime check for deployments that replace the DLL. DLL symbols are resolved once on open (`Core/Symbols.bi`).
 
 ## Example (PUB / SUB)
 
