@@ -54,7 +54,7 @@ jobs:
           if ($size -lt 5MB) {
             throw "Download too small ($size bytes); SourceForge may have returned an error page"
           }
-          $magic = Get-Content -LiteralPath $zip -Encoding Byte -TotalCount 2
+          $magic = [System.IO.File]::ReadAllBytes($zip)[0..1]
           if ($magic[0] -ne 0x50 -or $magic[1] -ne 0x4B) {
             throw "Not a ZIP archive (bad magic bytes)"
           }
