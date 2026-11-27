@@ -42,14 +42,28 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          $url = "https://sourceforge.net/projects/fbc/files/FreeBASIC-${{ env.FBC_VERSION }}/Binaries-Windows/FreeBASIC-${{ env.FBC_VERSION }}-win64.zip/download"
+          $ErrorActionPreference = 'Stop'
+          $ver = "${{ env.FBC_VERSION }}"
+          $url = "https://downloads.sourceforge.net/project/fbc/FreeBASIC-$ver/Binaries-Windows/FreeBASIC-$ver-win64.zip"
           $zip = "$env:RUNNER_TEMP\fbc-win64.zip"
-          Invoke-WebRequest -Uri $url -OutFile $zip
-          Expand-Archive -Path $zip -DestinationPath "$env:RUNNER_TEMP\fbc-root" -Force
-          $fbcDir = Get-ChildItem -Path "$env:RUNNER_TEMP\fbc-root" -Directory | Select-Object -First 1
-          if (-not $fbcDir) { throw "FreeBASIC extract failed" }
-          echo "$($fbcDir.FullName)" | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
-          fbc -version
+          $root = "$env:RUNNER_TEMP\fbc-root"
+          if (Test-Path $root) { Remove-Item $root -Recurse -Force }
+          New-Item -ItemType Directory -Force -Path $root | Out-Null
+          curl.exe -fSL $url -o $zip
+          $size = (Get-Item $zip).Length
+          if ($size -lt 5MB) {
+            throw "Download too small ($size bytes); SourceForge may have returned an error page"
+          }
+          $magic = Get-Content -LiteralPath $zip -Encoding Byte -TotalCount 2
+          if ($magic[0] -ne 0x50 -or $magic[1] -ne 0x4B) {
+            throw "Not a ZIP archive (bad magic bytes)"
+          }
+          Expand-Archive -LiteralPath $zip -DestinationPath $root -Force
+          $fbc = Get-ChildItem -Path $root -Recurse -Filter fbc.exe | Select-Object -First 1
+          if (-not $fbc) { throw "fbc.exe not found under $root" }
+          Add-Content -Path $env:GITHUB_PATH -Value $fbc.DirectoryName
+          "FBC=$($fbc.FullName)" | Add-Content -Path $env:GITHUB_ENV
+          & $fbc.FullName -version
 
       - name: Compile example set (Linux)
         if: runner.os == 'Linux'
@@ -73,7 +87,7 @@ jobs:
           foreach ($src in @("Example\Zmq.bas", "Example\Has.bas", "Example\Z85.bas", "Example\Poll.bas")) {
             Write-Host "Compiling $src ..."
             $out = "build\" + [IO.Path]::GetFileNameWithoutExtension($src) + ".exe"
-            fbc -w all $src -x $out
+            & $env:FBC -w all $src -x $out
           }
 
       - name: Build and run CiSmoke (Linux)
@@ -91,5 +105,5 @@ jobs:
           Set-StrictMode -Version Latest
           $ErrorActionPreference = 'Stop'
           Set-Location "${{ env.PKG }}"
-          fbc -w all Example\CiSmoke.bas -x CiSmoke.exe
+          & $env:FBC -w all Example\CiSmoke.bas -x CiSmoke.exe
           .\CiSmoke.exe
