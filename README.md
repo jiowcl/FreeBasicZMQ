@@ -174,6 +174,21 @@ End If
 
 Each major sample has a procedural copy under `Example/` and an OOP twin under `Example/Module/`.
 
+## Continuous Integration  
+
+GitHub Actions (`.github/workflows/ci.yml`) runs on **ubuntu-22.04** and **windows-latest**:
+
+1. Installs FreeBASIC **1.10.1** and (on Linux) `libzmq3-dev`.
+2. Compiles a small example set (`Zmq`, `Has`, `Z85`, `Poll`) without running them.
+3. Builds and runs **`Example/CiSmoke.bas`** from the package root — headless checks for `zmq_version`, `zmq_has`, Z85 round-trip, and inproc REQ/REP.
+
+Local smoke (from the package root that contains `Core/`, `Example/`, `Library/`):
+
+```bash
+fbc -w all Example/CiSmoke.bas -x CiSmoke
+./CiSmoke
+```
+
 ## License
 
 Copyright (c) 2017-2026 Ji-Feng Tsai.  

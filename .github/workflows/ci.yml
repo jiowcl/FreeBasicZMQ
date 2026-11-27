@@ -6,30 +6,90 @@ on:
   pull_request:
     branches: [ "main", "master" ]
 
+env:
+  PKG: FreeBasicZMQ
+  FBC_VERSION: "1.10.1"
+
 jobs:
-  build:
-    runs-on: ubuntu-22.04
+  smoke:
+    name: smoke (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, windows-latest]
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Install System Dependencies & ZeroMQ
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y gcc make libncurses5 libffi-dev libzmq3-dev
+      - name: Install system packages (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc make libncurses5 libffi-dev libzmq3-dev curl
 
-    - name: Install FreeBASIC Compiler (fbc)
-      run: |
-        URL="https://sourceforge.net/projects/fbc/files/FreeBASIC-1.10.1/Binaries-Linux/FreeBASIC-1.10.1-ubuntu-22.04-x86_64.tar.gz/download"
-        curl -s -L "$URL" | tar -xz
-        
-        cd FreeBASIC-1.10.1-ubuntu-22.04-x86_64
-        sudo ./install.sh -i
-        
-        fbc -version
+      - name: Install FreeBASIC (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          URL="https://sourceforge.net/projects/fbc/files/FreeBASIC-${FBC_VERSION}/Binaries-Linux/FreeBASIC-${FBC_VERSION}-ubuntu-22.04-x86_64.tar.gz/download"
+          curl -s -L "$URL" | tar -xz
+          cd "FreeBASIC-${FBC_VERSION}-ubuntu-22.04-x86_64"
+          sudo ./install.sh -i
+          fbc -version
 
-    - name: Compile FreeBasicZMQ Project
-      run: |
-        cd ./FreeBasicZMQ/Example
-        fbc -w all Zmq.bas -x FreeBasicZMQ_Test
+      - name: Install FreeBASIC (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $url = "https://sourceforge.net/projects/fbc/files/FreeBASIC-${{ env.FBC_VERSION }}/Binaries-Windows/FreeBASIC-${{ env.FBC_VERSION }}-win64.zip/download"
+          $zip = "$env:RUNNER_TEMP\fbc-win64.zip"
+          Invoke-WebRequest -Uri $url -OutFile $zip
+          Expand-Archive -Path $zip -DestinationPath "$env:RUNNER_TEMP\fbc-root" -Force
+          $fbcDir = Get-ChildItem -Path "$env:RUNNER_TEMP\fbc-root" -Directory | Select-Object -First 1
+          if (-not $fbcDir) { throw "FreeBASIC extract failed" }
+          echo "$($fbcDir.FullName)" | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+          fbc -version
+
+      - name: Compile example set (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          set -euo pipefail
+          cd "${{ env.PKG }}"
+          mkdir -p build
+          for src in Example/Zmq.bas Example/Has.bas Example/Z85.bas Example/Poll.bas; do
+            echo "Compiling $src ..."
+            fbc -w all "$src" -x "build/$(basename "$src" .bas)"
+          done
+
+      - name: Compile example set (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          Set-Location "${{ env.PKG }}"
+          New-Item -ItemType Directory -Force -Path build | Out-Null
+          foreach ($src in @("Example\Zmq.bas", "Example\Has.bas", "Example\Z85.bas", "Example\Poll.bas")) {
+            Write-Host "Compiling $src ..."
+            $out = "build\" + [IO.Path]::GetFileNameWithoutExtension($src) + ".exe"
+            fbc -w all $src -x $out
+          }
+
+      - name: Build and run CiSmoke (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          set -euo pipefail
+          cd "${{ env.PKG }}"
+          fbc -w all Example/CiSmoke.bas -x CiSmoke
+          ./CiSmoke
+
+      - name: Build and run CiSmoke (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Set-StrictMode -Version Latest
+          $ErrorActionPreference = 'Stop'
+          Set-Location "${{ env.PKG }}"
+          fbc -w all Example\CiSmoke.bas -x CiSmoke.exe
+          .\CiSmoke.exe
