@@ -14,7 +14,7 @@ ZMQ Wrapper for FreeBasic Programming Language.
 
 ## How to Build
 
-Building requires FreeBasic Compiler (tested under Windows 10/11).  
+Building requires FreeBasic Compiler (tested under Windows 10/11, Ubuntu 22).  
 
 ```bash
 fbc Example/PubServer.bas -target win64
